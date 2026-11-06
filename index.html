@@ -21,6 +21,9 @@
   --sky:#e3eaf0; --ink:#2b3238; --wire:#2b3238; --wood:#a77c4f; --porc:#8a4b2c; --poly:#8b949b;
   --metal:#a7b0b7; --tank:#93a3ab; --cu:#c27a3a; --al:#c3c9ce; --steel:#6c757c; --jacket:#2a2f33;
   --tube:#b98a4a; --yel:#e0b000; --conduit:#9aa4ab; --earth:#cdbd9f; --glass:#dfe8ee; --plate:#f4f6f7; --neu:#8d969d;
+  --leaf:#4f8a3e; --leaf2:#73a85a; --bark:#6b4a2e; --dead:#8a7d6c;
+  /* thermal (ironbow) palette: same in both themes, like a real IR camera */
+  --ir-bg:#160a2e; --ir-dim:#4a2a78; --ir-mid:#7a3378; --ir-mag:#c8336c; --ir-or:#ff8a1f; --ir-yel:#ffe76a; --ir-white:#ffffff; --ir-txt:#f4f0ff;
   --display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
@@ -32,6 +35,7 @@
   --sky:#1f2931; --ink:#0b0f13; --wire:#d3dae0; --wood:#8a6640; --porc:#a05a37; --poly:#76808a;
   --metal:#8f99a1; --tank:#6d7d86; --cu:#b86f30; --al:#aab2b8; --steel:#4f585f; --jacket:#59636a;
   --tube:#a77a3e; --yel:#e6bd1a; --conduit:#7e8990; --earth:#4a4031; --glass:#34414b; --plate:#c9d1d6; --neu:#b7c0c6;
+  --leaf:#3f7432; --leaf2:#5b8f47; --bark:#5a3e27; --dead:#7a6e60;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#12171c; --panel:#1b2228; --fg:#e7ebee; --muted:#9aa5af; --line:#2c353d;
@@ -41,6 +45,7 @@
   --sky:#1f2931; --ink:#0b0f13; --wire:#d3dae0; --wood:#8a6640; --porc:#a05a37; --poly:#76808a;
   --metal:#8f99a1; --tank:#6d7d86; --cu:#b86f30; --al:#aab2b8; --steel:#4f585f; --jacket:#59636a;
   --tube:#a77a3e; --yel:#e6bd1a; --conduit:#7e8990; --earth:#4a4031; --glass:#34414b; --plate:#c9d1d6; --neu:#b7c0c6;
+  --leaf:#3f7432; --leaf2:#5b8f47; --bark:#5a3e27; --dead:#7a6e60;
   color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--display);font-size:16px;line-height:1.4}
@@ -166,6 +171,17 @@ summary::-webkit-details-marker{display:none}
 .ugc{fill:none;stroke:var(--jacket);stroke-width:3;stroke-dasharray:5 3}
 .ld{stroke:var(--muted);stroke-width:.7;stroke-dasharray:2 2}
 .lb{fill:var(--fg);font:500 8.5px var(--mono)}
+.irbg{fill:var(--ir-bg)} .irw{fill:none;stroke:var(--ir-dim);stroke-width:2.5} .irc{fill:var(--ir-mid)} .irtank{fill:var(--ir-dim)}
+.irs{fill:var(--ir-mid);stroke:var(--ir-bg);stroke-width:.8} .irt{fill:var(--ir-txt);font:500 8px var(--mono)} .xh{stroke:var(--ir-txt);stroke-width:1;fill:none}
+.leaf{fill:var(--leaf);stroke:var(--ink);stroke-width:.6} .leaf2{fill:var(--leaf2);stroke:var(--ink);stroke-width:.6}
+.trunk{fill:none;stroke:var(--bark);stroke-width:8;stroke-linecap:round} .limb{fill:none;stroke:var(--bark);stroke-width:3;stroke-linecap:round}
+.deadt{fill:none;stroke:var(--dead);stroke-width:7;stroke-linecap:round} .deadb{fill:none;stroke:var(--dead);stroke-width:2.5;stroke-linecap:round}
+.vine{fill:none;stroke:var(--leaf);stroke-width:2}
+.hit{fill:none;stroke:var(--crit);stroke-width:1.6;stroke-dasharray:3 2}
+.zone{fill:var(--crit-bg);fill-opacity:.55;stroke:var(--crit);stroke-width:1;stroke-dasharray:4 3}
+.fall{fill:none;stroke:var(--crit);stroke-width:1.5;stroke-dasharray:4 3}
+.bminor{fill:var(--minor-bg);stroke:var(--minor)} .bmajor{fill:var(--major-bg);stroke:var(--major)} .bcrit{fill:var(--crit);stroke:var(--crit)}
+.axis{stroke:var(--fg);stroke-width:1}
 @media (max-width:480px){.fault-box{grid-template-columns:1fr}.check{grid-template-columns:1fr}.seg{justify-self:start}}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
 </style>
@@ -261,6 +277,17 @@ const pinS=(cx,b)=>R(cx-1.5,b-8,3,8,"metal")+P(`M${cx-12} ${b-6}L${cx+12} ${b-6}
 const twist=ph=>{let d=`M38 70`;for(let x=38,i=0;x<196;x+=12,i++){const up=(i+ph)%2?-1:1;d+=` Q${x+6} ${70+up*14} ${x+12} 70`}return d};
 const svg=(body,label)=>`<svg viewBox="0 0 200 150" role="img" aria-label="${label}">${body}</svg>`;
 
+/* thermal + vegetation helpers */
+const st_=v=>`style="stop-color:var(${v})"`;
+const irDefs=id=>`<defs><radialGradient id="hs-${id}"><stop offset="0" ${st_("--ir-white")}/><stop offset=".25" ${st_("--ir-yel")}/><stop offset=".55" ${st_("--ir-or")}/><stop offset=".8" ${st_("--ir-mag")} stop-opacity=".55"/><stop offset="1" ${st_("--ir-mag")} stop-opacity="0"/></radialGradient>`+
+  `<linearGradient id="sc-${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" ${st_("--ir-white")}/><stop offset=".2" ${st_("--ir-yel")}/><stop offset=".45" ${st_("--ir-or")}/><stop offset=".7" ${st_("--ir-mag")}/><stop offset="1" ${st_("--ir-dim")}/></linearGradient></defs>`;
+const IT=(x,y,t,a="start")=>`<text x="${x}" y="${y}" class="irt" text-anchor="${a}">${t}</text>`;
+const hot=(id,cx,cy,r)=>`<circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#hs-${id})"/>`;
+const xh=(cx,cy)=>`<path d="M${cx-10} ${cy}h6M${cx+4} ${cy}h6M${cx} ${cy-10}v6M${cx} ${cy+4}v6" class="xh"/>`;
+const irFrame=(id,body)=>irDefs(id)+R(0,0,200,150,"irbg")+body+`<rect x="186" y="16" width="7" height="110" fill="url(#sc-${id})"/>`+IT(189.5,11,"95°","middle")+IT(189.5,138,"20°","middle");
+const crown=(cx,cy,s)=>C(cx,cy,14*s,"leaf")+C(cx-12*s,cy+6*s,11*s,"leaf2")+C(cx+12*s,cy+5*s,11*s,"leaf2")+C(cx-5*s,cy-9*s,10*s,"leaf")+C(cx+7*s,cy-8*s,10*s,"leaf2");
+const tx=t=>20+t*160/30;
+
 function cutout(cls,poly){
   return POLE()+R(24,70,36,5,"metal")+R(58,28,16,92,cls,3)+(poly?vS(66,34,10,9,11,2.5,cls):vS(66,38,6,15,13,3.5,cls))
    +R(66,20,50,6,"metal")+R(108,15,24,14,"metal",3)+R(66,118,48,6,"metal")
@@ -334,13 +361,39 @@ const SVG={
  "brace":POLE(92,16,10,140)+R(10,30,180,14,"wood",1)
    +P("M40 44L94 100","braceo")+P("M40 44L94 100","brace")+P("M160 44L106 100","braceo")+P("M160 44L106 100","brace")
    +C(40,40,2.5,"metal")+C(160,40,2.5,"metal")+C(100,100,3,"metal")+C(100,37,3,"metal")
-   +L(60,64,40,90,"brace","end")+L(100,100,130,125,"brace bolt")+L(150,30,140,14,"cross arm","end")
+   +L(60,64,40,90,"brace","end")+L(100,100,130,125,"brace bolt")+L(150,30,140,14,"cross arm","end"),
+ "ir-conn":irFrame("ir-conn",[35,75,115].map(y=>P(`M0 ${y}H182`,"irw")+R(84,y-5,14,10,"irc",2)).join("")
+   +hot("ir-conn",91,35,7)+hot("ir-conn",91,115,7)+hot("ir-conn",91,75,24)+xh(91,75)+xh(91,35)
+   +IT(112,30,"Sp2 31.4°C")+IT(112,70,"Sp1 92.6°C")+IT(112,82,"ΔT 61.2°C")+IT(6,146,"phase B connector")),
+ "ir-cutout":irFrame("ir-cutout",R(60,30,14,90,"irc",3)+vS(67,38,6,15,11,3,"irs")+R(67,22,44,5,"irc")+R(106,17,18,12,"irc",3)+R(67,118,42,5,"irc")
+   +P("M110 120L117 32","irw")+P("M124 22H182","irw")+P("M110 124Q120 145 182 140","irw")+hot("ir-cutout",115,23,24)+xh(115,23)
+   +IT(126,46,"Sp1 118°C")+IT(126,58,"ΔT 84°C")+IT(6,146,"top contact")),
+ "ir-bushing":irFrame("ir-bushing",R(40,52,90,88,"irtank",8)+R(36,46,98,8,"irtank",3)+R(80,22,10,26,"irc",2)+vS(85,28,3,7,9,2.5,"irs")
+   +[70,88,106].map(y=>R(130,y-4,10,8,"irc",1)+P(`M140 ${y}H182`,"irw")).join("")+P("M85 22V10H182","irw")
+   +hot("ir-bushing",85,18,22)+xh(85,18)+IT(104,34,"Sp1 76.9°C")+IT(104,46,"ΔT 44°C")+IT(6,146,"H1 terminal")),
+ "ir-scale":T(20,18,"ΔT vs. same part, other phases")
+   +`<rect x="${tx(.5)}" y="36" width="${tx(3.5)-tx(.5)}" height="40" class="bminor"/><rect x="${tx(3.5)}" y="36" width="${tx(15)-tx(3.5)}" height="40" class="bmajor"/><rect x="${tx(15)}" y="36" width="${tx(30)-tx(15)}" height="40" class="bcrit"/>`
+   +T(tx(2),32,"1–3","middle")+T(tx(9.25),32,"4–15","middle")+T(tx(22.5),32,"over 15","middle")
+   +T(tx(2),104,"monitor","middle")+T(tx(9.25),92,"repair soon","middle")+T(tx(22.5),92,"TIER 1 – now","middle")
+   +`<line x1="20" y1="118" x2="180" y2="118" class="axis"/>`+[0,5,10,15,20,25,30].map(t=>`<line x1="${tx(t)}" y1="118" x2="${tx(t)}" y2="122" class="axis"/>`+T(tx(t),132,t,"middle")).join("")
+   +T(180,146,"ΔT °C","end"),
+ "veg-contact":POLE()+R(24,26,40,6,"wood")+P("M150 150L152 92L146 62","trunk")+P("M149 74L122 44","limb")+crown(150,55,1.2)+crown(118,38,.6)
+   +P("M24 70Q110 80 200 72","w")+P("M60 24Q130 34 200 26","wthick")+C(119,31,12,"hit")+L(130,24,150,10,"contact"),
+ "veg-clear":POLE()+P("M24 18Q110 26 200 18L200 62Q110 70 24 62Z","zone")+P("M120 150V92","trunk")+crown(120,80,1.3)+P("M24 40Q110 48 200 40","wthick")
+   +T(30,12,"clearance zone")+L(108,64,98,105,"encroaching","end"),
+ "veg-vine":POLE(92,16)+R(108,38,6,4,"metal")+R(108,70,6,4,"metal")+R(114,30,44,56,"tank",6)+R(111,26,50,7,"tank",3)+R(132,12,8,14,"porc",1)
+   +P("M96 150C110 130 86 120 100 100C112 84 88 76 102 60C110 48 112 44 118 38","vine")
+   +[[97,140],[103,122],[92,110],[106,92],[95,78],[104,64],[112,46],[118,38]].map(([x,y],i)=>E(x+(i%2?4:-4),y,5,3,"leaf2")).join("")
+   +L(92,110,60,120,"vine","end")+L(116,40,80,20,"reaching tank","end"),
+ "veg-hazard":POLE()+P("M24 56Q110 66 200 56","wthick")+P("M175 150L140 40","deadt")+P("M158 95L140 85M155 84L170 72M149 68L136 58M146 58L156 46","deadb")
+   +P("M140 40A115 115 0 0 0 104 62","fall")+P("M104 62l2 -7M104 62l7 -2","fall")
+   +L(122,44,90,20,"fall path","end")+L(162,110,150,135,"dead tree")
 };
 
 /* ---------- Figure library ---------- */
 const CATS=[
  ["prot","Protective devices"],["xc","Transformers & capacitors"],["ins","Insulators"],
- ["cpri","Conductors – primary"],["csec","Conductors – secondary"],["frm","Framing"]];
+ ["cpri","Conductors – primary"],["csec","Conductors – secondary"],["frm","Framing"],["ir","Thermal (IR)"],["veg","Vegetation"]];
 const FIGS=[
  {id:"arr-porc",cat:"prot",name:"Arrester – porcelain",sec:"arr",spot:"Brown or gray glazed body with a few thick sheds, on a bracket next to the cutout or on the transformer tank. A ground lead runs down from the bottom.",watch:["Cracked / shattered housing","Disconnector blown & hanging","Missing ground lead","Flash marks"]},
  {id:"arr-poly",cat:"prot",name:"Arrester – polymer",sec:"arr",spot:"Slim gray rubber housing with many thin sheds. Narrower and lighter-looking than porcelain.",watch:["Split or bulging housing","Disconnector blown","Tracking / chalky sheds","Missing ground lead"]},
@@ -363,7 +416,15 @@ const FIGS=[
  {id:"ug-sec",cat:"csec",name:"Underground secondary",sec:"sec",spot:"Black cables leave the transformer, make a drip loop, and enter a weatherhead on a conduit running down the pole.",watch:["Damaged weatherhead","Cracked insulation at loop","Conduit broken","Burnt connector"]},
  {id:"armless",cat:"frm",name:"Armless",sec:"arm",spot:"No cross arm. Post insulators bolt to the pole on standoff brackets, staggered on alternate sides.",watch:["Bracket bent / loose","Post cracked","Wire off clamp","Pole top damage"]},
  {id:"arm",cat:"frm",name:"Cross arm",sec:"arm",spot:"Horizontal wood or fiberglass arm bolted near the pole top, carrying pin insulators. Often a pole-top pin above.",watch:["Split or rotten arm","Burn marks","Arm not level","Woodpecker holes"]},
- {id:"brace",cat:"frm",name:"Cross arm brace",sec:"arm",spot:"Two diagonal steel or wood straps from the underside of the arm down to the pole, forming a V.",watch:["Broken / missing brace","Loose bolts","Bent brace","Arm sagging one side"]}
+ {id:"brace",cat:"frm",name:"Cross arm brace",sec:"arm",spot:"Two diagonal steel or wood straps from the underside of the arm down to the pole, forming a V.",watch:["Broken / missing brace","Loose bolts","Bent brace","Arm sagging one side"]},
+ {id:"ir-conn",cat:"ir",name:"Hot connector / splice",sec:"ir",spot:"One connector much brighter than the same connector on the other phases. Always compare like with like under the same load.",watch:["Connector hotter than other phases","Hot splice or sleeve","Hot jumper or tap"]},
+ {id:"ir-cutout",cat:"ir",name:"Hot cutout contact",sec:"ir",spot:"Heat at the top contact or hinge of a cutout usually means a loose or corroded contact. Compare with the cutouts on the other phases.",watch:["Hot top contact","Hot hinge","Hot fuse tube"]},
+ {id:"ir-bushing",cat:"ir",name:"Hot transformer bushing",sec:"ir",spot:"A bright spot at a bushing terminal points to a loose or corroded connection. A warm tank is normal under load; a single hot terminal is not.",watch:["Hot primary terminal","Hot secondary terminal","Uneven tank heating"]},
+ {id:"ir-scale",cat:"ir",name:"Thermal ΔT guide",sec:"ir",spot:"Severity bands for temperature rise over the same part on other phases, based on NETA guidance. Use your company's thresholds if they differ.",watch:["1–3 °C: monitor","4–15 °C: repair soon","Over 40 °C above ambient"]},
+ {id:"veg-contact",cat:"veg",name:"Tree contact",sec:"veg",spot:"Branches or leaves touching or resting on a wire. Zoom where the crown meets the conductor; brown or scorched leaves point to contact.",watch:["Leaves touching wire","Scorched leaves","Branch on secondary"]},
+ {id:"veg-clear",cat:"veg",name:"Clearance encroachment",sec:"veg",spot:"Growth inside the clearance zone around the wires, even if not touching yet. Judge distance against the cross arm length or pole spacing.",watch:["Growth inside clearance zone","Overhanging limbs","Fast regrowth"]},
+ {id:"veg-vine",cat:"veg",name:"Vines on pole",sec:"veg",spot:"Vines climbing the pole, guy wire or equipment. Once they reach a bushing or cutout they can carry current.",watch:["Vine on pole or guy","Vine near cutout or arrester","Vine on transformer"]},
+ {id:"veg-hazard",cat:"veg",name:"Hazard tree (fall-in)",sec:"veg",spot:"Dead, leaning or damaged tree tall enough to hit the lines if it falls. Bare gray branches with no leaves in season are a sign.",watch:["Dead or dying tree","Leaning toward lines","Split trunk or hanging limb"]}
 ];
 
 /* ---------- Checklist ---------- */
@@ -455,6 +516,20 @@ const DATA=[
   ["Covered conductor jacket damaged","Cuts, tracking, tree rub","major"],
   ["Riser termination cracked or tracking","Sheds and cable entry","major"],
   ["U-guard / conduit damaged","Full length down the pole","minor"]]},
+ {id:"ir",name:"Thermal (IR)",sub:"Compare each part to the same part on other phases",figs:["ir-conn","ir-cutout","ir-bushing","ir-scale"],checks:[
+  ["Connector, clamp or splice hotter than other phases","Note spot temperature and ΔT","major"],
+  ["Cutout contact or hinge hot","Top contact and hinge, each phase","major"],
+  ["Transformer bushing terminal hot","Primary and secondary terminals","major"],
+  ["Arrester warmer than other phases","A warm arrester may be failing","major"],
+  ["Transformer or recloser tank unusually hot or uneven","Compare to similar units nearby","major"],
+  ["ΔT over 15 °C vs. other phases (or over 40 °C above ambient)","Tier 1 – repair now","crit"]]},
+ {id:"veg",name:"Vegetation",sub:"Contact, clearance, vines and hazard trees",figs:["veg-contact","veg-clear","veg-vine","veg-hazard"],checks:[
+  ["Branch or leaves touching primary wire","Zoom where the crown meets the wire","crit"],
+  ["Growth inside clearance zone","Even if not touching yet","major"],
+  ["Vines on pole, guy or equipment","Follow vines up the pole","major"],
+  ["Dead or leaning tree that could fall into lines","Tree height vs. distance to lines","major"],
+  ["Tree contact on secondary or service drop","Secondary and service wires","minor"],
+  ["Limbs overhanging the lines","Branches above the conductors","minor"]]},
  {id:"pole",name:"Pole & surroundings",sub:"Last sweep for anything else major",figs:[],checks:[
   ["Pole leaning, cracked or burnt","Full pole, top to ground","crit"],
   ["Vegetation touching lines or equipment","Branches in contact or very close","major"],
@@ -486,7 +561,15 @@ const T1F={
  "ug-sec":["Cable burning at weatherhead","Bare conductor reachable from ground"],
  "armless":["Post broken, wire against pole","Bracket failed, phase dropping"],
  "arm":["Arm broken or burnt with wires on it","Arm hanging from one bolt"],
- "brace":["Braces broken and arm dropping","Arm tilted toward other wires"]
+ "brace":["Braces broken and arm dropping","Arm tilted toward other wires"],
+ "ir-conn":["Over 15 °C hotter than other phases","Over 40 °C above ambient"],
+ "ir-cutout":["Contact over 15 °C hotter than other phases","Glow, smoke or arcing"],
+ "ir-bushing":["Terminal over 15 °C hotter than other phases","Smoke or hot oil seep"],
+ "ir-scale":["Over 15 °C vs. other phases","Over 40 °C above ambient"],
+ "veg-contact":["Branch touching primary wire","Burn marks or smoke at contact"],
+ "veg-clear":["Growth about to touch primary","Scorched leaves near the wire"],
+ "veg-vine":["Vine touching primary, cutout or bushing","Vine across arrester or transformer"],
+ "veg-hazard":["Dead tree leaning toward lines","Tree cracked or uprooted, could fall now"]
 };
 
 const KEY="pole-check-v1";
