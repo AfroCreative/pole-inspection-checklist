@@ -137,6 +137,12 @@ summary::-webkit-details-marker{display:none}
 .watch{display:flex;flex-wrap:wrap;gap:4px}
 .watch span{font-size:12.5px;background:var(--crit-bg);color:var(--crit);padding:2px 7px;border-radius:4px}
 .fig .btn{align-self:flex-start;margin-top:auto}
+.t1fig{border:2px solid var(--crit);border-radius:6px;overflow:hidden}
+.t1fig .lbl{background:var(--crit);color:var(--panel);padding:3px 8px}
+.t1fig ul{margin:0;padding:6px 10px 7px 26px;font-size:13.5px;display:flex;flex-direction:column;gap:2px}
+.figkey{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0 0;font-size:13px;color:var(--muted)}
+.figkey i{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:4px}
+.figkey .k1{background:var(--crit-bg);color:var(--crit)} .figkey .k2{background:var(--crit);color:var(--panel)}
 .fig svg{display:block;width:100%;height:auto;background:var(--sky);border-radius:6px}
 .fig svg *{stroke-linejoin:round}
 .wood,.porc,.poly,.metal,.tank,.al,.cu,.steel,.conduit,.glass,.plate{stroke:var(--ink);stroke-width:1}
@@ -232,6 +238,7 @@ summary::-webkit-details-marker{display:none}
 </main>
 
 <main id="view-figures" hidden>
+  <p class="figkey"><i class="k1">Watch for</i> log as a fault <i class="k2">Tier 1</i> urgent – escalate right away</p>
   <div id="figs"></div>
 </main>
 </div>
@@ -457,6 +464,30 @@ const DATA=[
   ["Fire, smoke or active arcing visible","Anywhere on the structure or below it","crit"]]}
 ];
 const FIGMAP=Object.fromEntries(FIGS.map(f=>[f.id,f]));
+const T1F={
+ "arr-porc":["Housing shattered, pieces hanging","Active arcing, smoke or fire"],
+ "arr-poly":["Housing blown open","Active arcing, smoke or fire"],
+ "co-porc":["Cutout broken, lead hanging","Burning or arcing at contacts"],
+ "co-poly":["Cutout broken, lead hanging","Burning or arcing at contacts"],
+ "recloser":["Tank bulging or ruptured","Fire, smoke or arcing"],
+ "cap":["Can bulging or ruptured","Can burning or spilling oil"],
+ "xfmr":["Tank bulging or ruptured","Fire, smoke or heavy oil spill"],
+ "bush-pri":["Bushing shattered, lead loose","Active arcing at terminal"],
+ "bush-sec":["Secondary lead burnt off or hanging","Neutral (X2) disconnected"],
+ "deadend":["Insulator broken, wire dropping","Clamp failed, wire pulling out"],
+ "pinpost":["Conductor off the insulator","Insulator broken, wire on the arm"],
+ "spool":["Wire off spool, hanging low","Rack pulled away from pole"],
+ "al":["Conductor down or hanging low","Conductor broken"],
+ "cu":["Conductor down or hanging low","Conductor broken"],
+ "spacer":["Phase wire down or touching messenger","Tree lying on the lines"],
+ "ug-pri":["Termination burning or blown","Riser broken, cable exposed"],
+ "open":["Wire down or near the ground","Wires touching each other"],
+ "triplex":["Neutral broken","Cable down or hanging low"],
+ "ug-sec":["Cable burning at weatherhead","Bare conductor reachable from ground"],
+ "armless":["Post broken, wire against pole","Bracket failed, phase dropping"],
+ "arm":["Arm broken or burnt with wires on it","Arm hanging from one bolt"],
+ "brace":["Braces broken and arm dropping","Arm tilted toward other wires"]
+};
 
 const KEY="pole-check-v1";
 let st=load();
@@ -594,6 +625,7 @@ document.getElementById("figs").innerHTML=CATS.map(([cid,cname])=>`<section clas
     <h3>${esc(f.name)}</h3>
     <div><div class="lbl">Spot it</div><p>${esc(f.spot)}</p></div>
     <div><div class="lbl">Watch for</div><div class="watch">${f.watch.map(w=>`<span>${esc(w)}</span>`).join("")}</div></div>
+    <div class="t1fig"><div class="lbl">Tier 1 – report now if</div><ul>${T1F[f.id].map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
     <button type="button" class="btn sm" data-sec="${f.sec}">Check: ${esc(secName(f.sec))} →</button>
   </article>`).join("")}</div></section>`).join("");
 document.getElementById("catnav").innerHTML=CATS.map(([cid,cname])=>`<button type="button" data-cat="${cid}">${cname}</button>`).join("");
