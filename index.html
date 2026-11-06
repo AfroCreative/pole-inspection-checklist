@@ -108,6 +108,21 @@ summary::-webkit-details-marker{display:none}
 .report h2{margin:0;font-size:16px;letter-spacing:.06em;text-transform:uppercase;flex:1}
 .report pre{font-family:var(--mono);font-size:12.5px;white-space:pre-wrap;margin:8px 0 0;background:var(--bg);padding:10px;border-radius:6px;max-height:320px;overflow:auto}
 .toast{font-size:13px;color:var(--ok);font-weight:600}
+.c-t1{background:var(--crit);color:var(--panel)}
+.t1{margin-top:16px;max-width:760px;border:2px solid var(--crit);border-radius:8px;background:var(--panel);overflow:hidden}
+.t1h{background:var(--crit);color:var(--panel);display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 14px}
+.t1h h2{margin:0;font-size:17px;letter-spacing:.06em;text-transform:uppercase;flex:1;min-width:0}
+.t1h .btn{background:var(--panel);color:var(--crit);border-color:var(--panel)}
+.t1 ol{margin:0;padding:12px 14px 4px 36px;display:flex;flex-direction:column;gap:8px}
+.t1 li b{font-weight:600}
+.t1 li span{display:block;font-size:13px;color:var(--muted)}
+.t1f{padding:6px 14px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.t1check{grid-column:1/-1;display:flex;gap:8px;align-items:center;font-size:14px;font-weight:600;color:var(--crit);cursor:pointer}
+.t1check input{width:auto}
+.t1guide{max-width:760px;margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.t1guide summary{font-weight:600;font-size:15px;color:var(--crit)}
+.t1guide ul{margin:0;padding:0 14px 6px 34px;font-size:14px;display:flex;flex-direction:column;gap:3px}
+.t1guide p{margin:0;padding:0 14px 12px;font-size:13px;color:var(--muted);max-width:65ch}
 
 /* figures */
 .catnav{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}
@@ -171,6 +186,7 @@ summary::-webkit-details-marker{display:none}
     <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
     <div class="stats">
       <span class="prog" id="prog">0 / 0 checked</span>
+      <span class="chip c-t1" id="nT1" hidden>0 Tier 1</span>
       <span class="chip c-crit" id="nCrit">0 critical</span>
       <span class="chip c-major" id="nMajor">0 major</span>
       <span class="chip c-minor" id="nMinor">0 minor</span>
@@ -181,6 +197,28 @@ summary::-webkit-details-marker{display:none}
 </div></header>
 
 <main id="view-checklist">
+  <section class="t1" id="t1" hidden aria-live="polite">
+    <div class="t1h">
+      <h2 id="t1title">Tier 1 – report now</h2>
+      <button class="btn sm" id="t1copy" type="button">Copy Tier 1 report</button>
+    </div>
+    <ol id="t1list"></ol>
+    <div class="t1f"><span>Escalate these before moving to the next pole.</span><span class="toast" id="t1toast"></span></div>
+  </section>
+  <details class="t1guide">
+    <summary>What counts as Tier 1?</summary>
+    <ul>
+      <li>Conductor down, off the insulator, or hanging low</li>
+      <li>Broken or disconnected neutral</li>
+      <li>Fire, smoke, active arcing or fresh burn damage</li>
+      <li>Pole broken, cracked through or leaning badly</li>
+      <li>Transformer, recloser or capacitor tank bulging or ruptured</li>
+      <li>Tree or object in contact with primary wires</li>
+      <li>Cross arm broken or burnt with wires still on it</li>
+      <li>Anything that could fall or put the public at risk</li>
+    </ul>
+    <p>Critical faults are flagged Tier 1 automatically. Tick “Tier 1” on any other fault you think is urgent. Always follow your company's escalation procedure.</p>
+  </details>
   <p class="tip">Work top to bottom. Every item needs <b>OK</b> or <b>Fault</b> before a section turns green. If a component isn't on the pole, tick “Not on this pole” so it's skipped on purpose. Tap a figure name to see what the equipment looks like.</p>
   <div class="sections" id="sections"></div>
   <section class="report">
@@ -415,7 +453,8 @@ const DATA=[
   ["Vegetation touching lines or equipment","Branches in contact or very close","major"],
   ["Foreign object on lines (balloon, kite, debris)","All conductors in frame","major"],
   ["Animal nest on equipment","Arm, transformer, cutouts","minor"],
-  ["Guy wire slack, broken or missing guard","Down guys and anchors","minor"]]}
+  ["Guy wire slack, broken or missing guard","Down guys and anchors","minor"],
+  ["Fire, smoke or active arcing visible","Anywhere on the structure or below it","crit"]]}
 ];
 const FIGMAP=Object.fromEntries(FIGS.map(f=>[f.id,f]));
 
@@ -425,6 +464,22 @@ function blank(){return {pole:"",img:"",marks:{},na:{},open:"pco"}}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.marks)return s}catch(e){}return blank()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
 function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+const isT1=(m,c)=>m.t1!==undefined?m.t1:(m.sev||c[2])==="crit";
+function t1Items(){
+  const out=[];
+  DATA.forEach(s=>{if(st.na[s.id])return;s.checks.forEach((c,ci)=>{const m=st.marks[s.id+"-"+ci];
+    if(m&&m.v==="fault"&&isT1(m,c))out.push({sec:s.name,check:c[0],sev:m.sev||c[2],note:m.note||""})})});
+  const o={crit:0,major:1,minor:2};return out.sort((a,b)=>o[a.sev]-o[b.sev]);
+}
+function t1Report(items){
+  return `*** TIER 1 – URGENT ***\nPOLE: ${st.pole||"(no ID)"}\nIMAGES: ${st.img||"-"}\nFOUND: ${new Date().toLocaleString()}\n\nISSUES (${items.length}):\n`+
+    items.map((t,i)=>`  ${i+1}. [${S[t.sev].toUpperCase()}] ${t.sec} – ${t.check}${t.note?` (${t.note})`:""}`).join("\n")+"\n\nSource: drone image review";
+}
+function copyText(text,toast,selEl){
+  const sel=()=>{const r=document.createRange();r.selectNodeContents(selEl);const s=getSelection();s.removeAllRanges();s.addRange(r);toast.textContent="Selected – copy it"};
+  try{navigator.clipboard.writeText(text).then(()=>{toast.textContent="Copied"},sel)}catch(e){sel()}
+  setTimeout(()=>toast.textContent="",2500);
+}
 const reduce=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const secEl=document.getElementById("sections");
@@ -441,6 +496,7 @@ function render(){
         ${fault?`<div class="fault-box">
           <select id="sev-${k}" data-a="sev" aria-label="Severity">${Object.keys(S).map(x=>`<option value="${x}" ${(m.sev||c[2])===x?"selected":""}>${S[x]}</option>`).join("")}</select>
           <input id="note-${k}" data-a="note" placeholder="Note: phase, image #, what you see" value="${esc(m.note||"")}">
+          <label class="t1check"><input type="checkbox" id="t1-${k}" data-a="t1" ${isT1(m,c)?"checked":""}> Tier 1 – urgent, report now</label>
         </div>`:""}
       </div>`}).join("");
     const figs=s.figs.length?`<div class="figlinks">Figures ${s.figs.map(f=>`<button type="button" data-fig="${f}">${esc(FIGMAP[f].name)}</button>`).join("")}</div>`:"";
@@ -471,6 +527,11 @@ function update(){
   document.getElementById("nCrit").textContent=n.crit+" critical";
   document.getElementById("nMajor").textContent=n.major+" major";
   document.getElementById("nMinor").textContent=n.minor+" minor";
+  const t1=t1Items();
+  document.getElementById("t1").hidden=!t1.length;
+  document.getElementById("t1title").textContent=`Tier 1 – report now (${t1.length})`;
+  document.getElementById("t1list").innerHTML=t1.map(t=>`<li><b>${esc(t.sec)} – ${esc(t.check)}</b><span>${S[t.sev]}${t.note?" · "+esc(t.note):""}</span></li>`).join("");
+  const c1=document.getElementById("nT1");c1.hidden=!t1.length;c1.textContent=t1.length+" Tier 1";
   document.getElementById("reportText").textContent=report(D,T);
   save();
 }
@@ -485,6 +546,8 @@ function report(D,T){
       else if(m.v==="fault")faults.push({sev:m.sev||c[2],t:`${s.name} – ${c[0]}${m.note?` (${m.note})`:""}`});});
   });
   const order={crit:0,major:1,minor:2};faults.sort((a,b)=>order[a.sev]-order[b.sev]);
+  const t1=t1Items();
+  if(t1.length)out+=`\n*** TIER 1 – URGENT (${t1.length}) ***\n`+t1.map(t=>`  ! ${t.sec} – ${t.check}${t.note?` (${t.note})`:""}`).join("\n")+"\n";
   out+=`\nFAULTS (${faults.length}):\n`+(faults.length?faults.map(f=>`  [${S[f.sev].toUpperCase()}] ${f.t}`).join("\n"):"  None found")+"\n";
   if(skipped.length)out+=`\nNOT ON POLE: ${skipped.join(", ")}\n`;
   if(missing.length)out+=`\n⚠ NOT YET CHECKED (${missing.length}):\n`+missing.map(x=>"  - "+x).join("\n")+"\n";
@@ -504,9 +567,12 @@ secEl.addEventListener("click",e=>{
   }
 });
 secEl.addEventListener("input",e=>{
-  const a=e.target.dataset.a;if(a!=="sev"&&a!=="note")return;
-  const k=e.target.closest(".check").dataset.k;st.marks[k][a]=e.target.value;update();
+  const a=e.target.dataset.a;if(a!=="sev"&&a!=="note"&&a!=="t1")return;
+  const k=e.target.closest(".check").dataset.k;
+  st.marks[k][a]=a==="t1"?e.target.checked:e.target.value;
+  if(a==="sev"){render();document.getElementById("sev-"+k)?.focus()}else update();
 });
+document.getElementById("t1copy").onclick=()=>copyText(t1Report(t1Items()),document.getElementById("t1toast"),document.getElementById("t1list"));
 secEl.addEventListener("change",e=>{const id=e.target.dataset.na;if(!id)return;st.na[id]=e.target.checked;render()});
 secEl.addEventListener("toggle",e=>{if(e.target.open){st.open=e.target.id.slice(4);save()}},true);
 
@@ -518,12 +584,7 @@ const cb=document.getElementById("confirmBox");
 document.getElementById("newPole").onclick=()=>{cb.hidden=false};
 document.getElementById("confirmNo").onclick=()=>{cb.hidden=true};
 document.getElementById("confirmYes").onclick=()=>{st=blank();poleEl.value="";imgEl.value="";cb.hidden=true;render();window.scrollTo(0,0)};
-document.getElementById("copyBtn").onclick=()=>{
-  const pre=document.getElementById("reportText"),toast=document.getElementById("toast");
-  const sel=()=>{const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);toast.textContent="Selected – copy it"};
-  try{navigator.clipboard.writeText(pre.textContent).then(()=>{toast.textContent="Copied"},sel)}catch(e){sel()}
-  setTimeout(()=>toast.textContent="",2500);
-};
+document.getElementById("copyBtn").onclick=()=>{const pre=document.getElementById("reportText");copyText(pre.textContent,document.getElementById("toast"),pre)};
 
 /* ---------- Figures view ---------- */
 const secName=id=>DATA.find(d=>d.id===id)?.name||"";
