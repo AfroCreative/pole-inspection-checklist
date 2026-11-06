@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<title>Pole Inspection Checklist</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky header with Checklist / Figures tabs; checklist = accordion per component; figures = equipment drawings on a sky panel, grouped by category */
+:root{
+  --bg:#eef0f2; --panel:#ffffff; --fg:#1b2229; --muted:#5b6672; --line:#d5dade;
+  --accent:#e8a200; --accent-ink:#1b2229;
+  --ok:#2f8f5b; --ok-bg:#e3f3ea; --minor:#8a6d00; --minor-bg:#fdf3cf;
+  --major:#c25a00; --major-bg:#fde6d2; --crit:#c4242f; --crit-bg:#fbdcdf;
+  --na:#7b8590; --na-bg:#e6e9ec;
+  /* figure palette */
+  --sky:#e3eaf0; --ink:#2b3238; --wire:#2b3238; --wood:#a77c4f; --porc:#8a4b2c; --poly:#8b949b;
+  --metal:#a7b0b7; --tank:#93a3ab; --cu:#c27a3a; --al:#c3c9ce; --steel:#6c757c; --jacket:#2a2f33;
+  --tube:#b98a4a; --yel:#e0b000; --conduit:#9aa4ab; --earth:#cdbd9f; --glass:#dfe8ee; --plate:#f4f6f7; --neu:#8d969d;
+  --display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12171c; --panel:#1b2228; --fg:#e7ebee; --muted:#9aa5af; --line:#2c353d;
+  --accent:#f2b51d; --accent-ink:#12171c;
+  --ok:#5cc08a; --ok-bg:#183326; --minor:#e6c447; --minor-bg:#332c10;
+  --major:#f28b3a; --major-bg:#3a2412; --crit:#f2646d; --crit-bg:#3d1a1d; --na:#8b96a0; --na-bg:#252d34;
+  --sky:#1f2931; --ink:#0b0f13; --wire:#d3dae0; --wood:#8a6640; --porc:#a05a37; --poly:#76808a;
+  --metal:#8f99a1; --tank:#6d7d86; --cu:#b86f30; --al:#aab2b8; --steel:#4f585f; --jacket:#59636a;
+  --tube:#a77a3e; --yel:#e6bd1a; --conduit:#7e8990; --earth:#4a4031; --glass:#34414b; --plate:#c9d1d6; --neu:#b7c0c6;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12171c; --panel:#1b2228; --fg:#e7ebee; --muted:#9aa5af; --line:#2c353d;
+  --accent:#f2b51d; --accent-ink:#12171c;
+  --ok:#5cc08a; --ok-bg:#183326; --minor:#e6c447; --minor-bg:#332c10;
+  --major:#f28b3a; --major-bg:#3a2412; --crit:#f2646d; --crit-bg:#3d1a1d; --na:#8b96a0; --na-bg:#252d34;
+  --sky:#1f2931; --ink:#0b0f13; --wire:#d3dae0; --wood:#8a6640; --porc:#a05a37; --poly:#76808a;
+  --metal:#8f99a1; --tank:#6d7d86; --cu:#b86f30; --al:#aab2b8; --steel:#4f585f; --jacket:#59636a;
+  --tube:#a77a3e; --yel:#e6bd1a; --conduit:#7e8990; --earth:#4a4031; --glass:#34414b; --plate:#c9d1d6; --neu:#b7c0c6;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--display);font-size:16px;line-height:1.4}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--line);margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:12px max(16px,env(safe-area-inset-left,0px))}
+.hin{max-width:948px;margin:0 auto}
+.hrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+h1{font-size:20px;margin:0;font-weight:700;letter-spacing:.01em;text-wrap:balance;flex:1;min-width:0}
+h1 small{display:block;font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.tabs{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.tabs button{font:inherit;font-size:14px;font-weight:600;padding:7px 14px;border:0;background:var(--panel);color:var(--muted);cursor:pointer}
+.tabs button+button{border-left:1px solid var(--line)}
+.tabs button[aria-selected="true"]{background:var(--fg);color:var(--panel)}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+label.f{display:flex;flex-direction:column;gap:2px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:0}
+input,select{font:inherit;font-size:15px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%;min-width:0}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--mono)}
+.bar{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-top:12px;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+.stats{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center;font-variant-numeric:tabular-nums}
+.chip{font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px;letter-spacing:.03em;white-space:nowrap}
+.c-crit{background:var(--crit-bg);color:var(--crit)} .c-major{background:var(--major-bg);color:var(--major)} .c-minor{background:var(--minor-bg);color:var(--minor)}
+.prog{font-family:var(--mono);font-size:13px;color:var(--muted);margin-right:auto}
+.btn{font:inherit;font-size:14px;font-weight:600;border-radius:6px;padding:8px 12px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.sm{font-size:13px;padding:4px 9px}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;padding:8px 10px;background:var(--crit-bg);color:var(--crit);border-radius:6px;font-size:14px}
+.tip{margin:16px 0 4px;font-size:14px;color:var(--muted);max-width:65ch}
+.sections{display:flex;flex-direction:column;gap:10px;margin-top:12px;max-width:760px}
+details.sec{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+details.sec[data-state="fault"]{border-left:4px solid var(--crit)}
+details.sec[data-state="done"]{border-left:4px solid var(--ok)}
+details.sec[data-state="na"]{border-left:4px solid var(--na)}
+summary{list-style:none;cursor:pointer;display:flex;gap:10px;align-items:center;padding:12px 14px}
+summary::-webkit-details-marker{display:none}
+.num{font-family:var(--mono);font-size:13px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--bg);border:1px solid var(--line);flex:none}
+[data-state="done"] .num{background:var(--ok);color:var(--panel);border-color:var(--ok)}
+[data-state="fault"] .num{background:var(--crit);color:var(--panel);border-color:var(--crit)}
+.sname{font-weight:600;font-size:17px;flex:1;min-width:0}
+.sname em{display:block;font-style:normal;font-weight:400;font-size:13px;color:var(--muted)}
+.scount{font-family:var(--mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.body{border-top:1px solid var(--line);padding:6px 14px 12px}
+.toprow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:6px 0 4px}
+.natoggle{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.natoggle input{width:auto}
+.figlinks{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.figlinks button{font:inherit;font-size:13px;letter-spacing:0;text-transform:none;font-weight:500;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--sky);color:var(--fg);cursor:pointer}
+.check{display:grid;grid-template-columns:1fr auto;gap:6px 10px;padding:10px 0;border-bottom:1px dashed var(--line);align-items:center}
+.check:last-child{border-bottom:0}
+.ctext{min-width:0}
+.ctext b{font-weight:500}
+.ctext .look{display:block;font-size:13px;color:var(--muted)}
+.sev{font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-left:6px;vertical-align:1px}
+.sev.crit{color:var(--crit)} .sev.major{color:var(--major)} .sev.minor{color:var(--minor)}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{font:inherit;font-size:13px;font-weight:600;padding:8px 11px;border:0;background:var(--panel);color:var(--muted);cursor:pointer;min-width:52px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"].ok{background:var(--ok);color:var(--panel)}
+.seg button[aria-pressed="true"].fault{background:var(--crit);color:var(--panel)}
+.fault-box{grid-column:1/-1;display:grid;grid-template-columns:130px 1fr;gap:8px;background:var(--crit-bg);padding:8px;border-radius:6px}
+.disabled .check{opacity:.45;pointer-events:none}
+.report{margin-top:20px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;max-width:760px}
+.report h2{margin:0;font-size:16px;letter-spacing:.06em;text-transform:uppercase;flex:1}
+.report pre{font-family:var(--mono);font-size:12.5px;white-space:pre-wrap;margin:8px 0 0;background:var(--bg);padding:10px;border-radius:6px;max-height:320px;overflow:auto}
+.toast{font-size:13px;color:var(--ok);font-weight:600}
+
+/* figures */
+.catnav{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}
+.catnav button{font:inherit;font-size:13px;font-weight:600;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}
+.cat h2{font-size:15px;letter-spacing:.09em;text-transform:uppercase;margin:26px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--fg);scroll-margin-top:190px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px;scroll-margin-top:190px;min-width:0}
+.fig.flash{outline:3px solid var(--accent);outline-offset:2px}
+.fig h3{margin:0;font-size:17px;font-weight:700;line-height:1.2}
+.fig p{margin:0;font-size:14px;color:var(--muted)}
+.fig .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.watch{display:flex;flex-wrap:wrap;gap:4px}
+.watch span{font-size:12.5px;background:var(--crit-bg);color:var(--crit);padding:2px 7px;border-radius:4px}
+.fig .btn{align-self:flex-start;margin-top:auto}
+.fig svg{display:block;width:100%;height:auto;background:var(--sky);border-radius:6px}
+.fig svg *{stroke-linejoin:round}
+.wood,.porc,.poly,.metal,.tank,.al,.cu,.steel,.conduit,.glass,.plate{stroke:var(--ink);stroke-width:1}
+.wood{fill:var(--wood)} .porc{fill:var(--porc)} .poly{fill:var(--poly)} .metal{fill:var(--metal)} .tank{fill:var(--tank)}
+.al{fill:var(--al)} .cu{fill:var(--cu)} .steel{fill:var(--steel)} .conduit{fill:var(--conduit)} .glass{fill:var(--glass)} .plate{fill:var(--plate)}
+.w{fill:none;stroke:var(--wire);stroke-width:1.6}
+.wthick{fill:none;stroke:var(--wire);stroke-width:2.5}
+.tube{fill:none;stroke:var(--tube);stroke-width:8;stroke-linecap:round}
+.tubeo{fill:none;stroke:var(--ink);stroke-width:10;stroke-linecap:round}
+.yel{fill:none;stroke:var(--yel);stroke-width:4;stroke-linecap:round}
+.ring{fill:none;stroke:var(--yel);stroke-width:2}
+.jkt{fill:none;stroke:var(--jacket);stroke-width:6;stroke-linecap:round}
+.jkt3{fill:none;stroke:var(--jacket);stroke-width:3}
+.neu{fill:none;stroke:var(--neu);stroke-width:3}
+.brace{fill:none;stroke:var(--metal);stroke-width:5;stroke-linecap:round}
+.braceo{fill:none;stroke:var(--ink);stroke-width:7;stroke-linecap:round}
+.strand{stroke:var(--ink);stroke-width:.6;opacity:.55}
+.tie{fill:none;stroke:var(--metal);stroke-width:1.6}
+.earth{fill:var(--earth)}
+.gnd{stroke:var(--ink);stroke-width:1.2}
+.ugc{fill:none;stroke:var(--jacket);stroke-width:3;stroke-dasharray:5 3}
+.ld{stroke:var(--muted);stroke-width:.7;stroke-dasharray:2 2}
+.lb{fill:var(--fg);font:500 8.5px var(--mono)}
+@media (max-width:480px){.fault-box{grid-template-columns:1fr}.check{grid-template-columns:1fr}.seg{justify-self:start}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+
+<div class="wrap">
+<header><div class="hin">
+  <div class="hrow">
+    <h1><small>Drone image review</small>Pole Inspection Checklist</h1>
+    <nav class="tabs" role="tablist">
+      <button type="button" role="tab" id="tab-checklist" data-view="checklist">Checklist</button>
+      <button type="button" role="tab" id="tab-figures" data-view="figures">Figures</button>
+    </nav>
+  </div>
+  <div id="ckHead">
+    <div id="confirmBox" class="confirm" hidden>
+      <span>Clear all marks and start a new pole?</span>
+      <button class="btn" id="confirmYes" type="button">Clear</button>
+      <button class="btn" id="confirmNo" type="button">Cancel</button>
+    </div>
+    <div class="fields">
+      <label class="f">Pole / structure ID<input id="poleId" class="mono" placeholder="e.g. P-104582"></label>
+      <label class="f">Image / flight ref<input id="imgRef" class="mono" placeholder="e.g. DJI_0423–0431"></label>
+    </div>
+    <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+    <div class="stats">
+      <span class="prog" id="prog">0 / 0 checked</span>
+      <span class="chip c-crit" id="nCrit">0 critical</span>
+      <span class="chip c-major" id="nMajor">0 major</span>
+      <span class="chip c-minor" id="nMinor">0 minor</span>
+      <button class="btn sm" id="newPole" type="button">Next pole</button>
+    </div>
+  </div>
+  <div id="figHead" hidden><nav class="catnav" id="catnav" aria-label="Figure categories"></nav></div>
+</div></header>
+
+<main id="view-checklist">
+  <p class="tip">Work top to bottom. Every item needs <b>OK</b> or <b>Fault</b> before a section turns green. If a component isn't on the pole, tick “Not on this pole” so it's skipped on purpose. Tap a figure name to see what the equipment looks like.</p>
+  <div class="sections" id="sections"></div>
+  <section class="report">
+    <div class="hrow">
+      <h2>Pole report</h2>
+      <span class="toast" id="toast"></span>
+      <button class="btn primary" id="copyBtn" type="button">Copy report</button>
+    </div>
+    <pre id="reportText"></pre>
+  </section>
+</main>
+
+<main id="view-figures" hidden>
+  <div id="figs"></div>
+</main>
+</div>
+
+<script>
+/* ---------- SVG helpers (viewBox 0 0 200 150) ---------- */
+const R=(x,y,w,h,c,rx=0)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const E=(cx,cy,rx,ry,c)=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" class="${c}"/>`;
+const C=(cx,cy,r,c)=>`<circle cx="${cx}" cy="${cy}" r="${r}" class="${c}"/>`;
+const P=(d,c="w")=>`<path d="${d}" class="${c}"/>`;
+const T=(x,y,t,a="start")=>`<text x="${x}" y="${y}" class="lb" text-anchor="${a}">${t}</text>`;
+const L=(x1,y1,x2,y2,t,a="start")=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="ld"/>`+T(x2+(a==="end"?-3:3),y2+3,t,a);
+const vS=(cx,y0,n,st,rx,ry,c)=>Array.from({length:n},(_,i)=>E(cx,y0+i*st,rx,ry,c)).join("");
+const hS=(x0,cy,n,st,rx,ry,c)=>Array.from({length:n},(_,i)=>E(x0+i*st,cy,rx,ry,c)).join("");
+const ring=(cx,cy,n,rad,r,c)=>Array.from({length:n},(_,i)=>{const a=i/n*Math.PI*2;return C((cx+rad*Math.cos(a)).toFixed(1),(cy+rad*Math.sin(a)).toFixed(1),r,c)}).join("");
+const POLE=(x=8,w=16,y=0,h=150)=>R(x,y,w,h,"wood");
+const stripes=()=>Array.from({length:13},(_,i)=>`<line x1="${8+i*8}" y1="80" x2="${16+i*8}" y2="60" class="strand"/>`).join("");
+const spool=(x,cy)=>P(`M${x} ${cy-10}h26v6h-4v8h4v6h-26v-6h4v-8h-4z`,"porc");
+const pinS=(cx,b)=>R(cx-1.5,b-8,3,8,"metal")+P(`M${cx-12} ${b-6}L${cx+12} ${b-6}L${cx+8} ${b-14}L${cx-8} ${b-14}Z`,"porc")+P(`M${cx-8} ${b-14}L${cx+8} ${b-14}L${cx+5} ${b-22}L${cx-5} ${b-22}Z`,"porc")+R(cx-4,b-27,8,5,"porc",1)+C(cx,b-30,3.5,"al");
+const twist=ph=>{let d=`M38 70`;for(let x=38,i=0;x<196;x+=12,i++){const up=(i+ph)%2?-1:1;d+=` Q${x+6} ${70+up*14} ${x+12} 70`}return d};
+const svg=(body,label)=>`<svg viewBox="0 0 200 150" role="img" aria-label="${label}">${body}</svg>`;
+
+function cutout(cls,poly){
+  return POLE()+R(24,70,36,5,"metal")+R(58,28,16,92,cls,3)+(poly?vS(66,34,10,9,11,2.5,cls):vS(66,38,6,15,13,3.5,cls))
+   +R(66,20,50,6,"metal")+R(108,15,24,14,"metal",3)+R(66,118,48,6,"metal")
+   +P("M113 121L121 32","tubeo")+P("M113 121L121 32","tube")+C(113,121,5,"metal")+C(124,26,4,"w")
+   +P("M132 22H196")+P("M113 126Q122 146 196 140")
+   +L(119,80,140,80,"fuse door")+L(118,121,140,110,"hinge")+L(110,16,98,8,"top contact","end");
+}
+
+const SVG={
+ "arr-porc":POLE()+R(24,72,58,5,"metal")+R(80,30,24,80,"porc",3)+vS(92,40,5,15,18,4.5,"porc")+R(83,22,18,9,"metal",2)+P("M92 22V12")+P("M92 12Q130 4 196 8")+R(86,110,12,10,"metal",2)+P("M92 120Q92 142 60 144L24 144")
+   +L(110,70,128,70,"sheds")+L(98,115,128,120,"disconnector")+L(64,143,100,134,"ground lead"),
+ "arr-poly":POLE()+R(24,72,62,5,"metal")+R(85,26,14,86,"poly",2)+vS(92,32,9,9.5,13,3,"poly")+R(85,18,14,8,"metal",2)+P("M92 18V12")+P("M92 12Q130 4 196 8")+R(87,112,10,9,"metal",2)+P("M92 121Q92 142 60 144L24 144")
+   +L(106,60,128,60,"polymer sheds")+L(97,116,128,120,"disconnector")+L(64,143,100,134,"ground lead"),
+ "co-porc":cutout("porc",false),
+ "co-poly":cutout("poly",true),
+ "recloser":POLE()+R(24,62,28,5,"metal")+R(24,104,28,5,"metal")+R(50,50,70,72,"tank",10)+R(46,44,78,9,"tank",3)
+   +[66,104].map(cx=>R(cx-5,16,10,28,"poly",2)+vS(cx,20,4,7,8,2.5,"poly")+P(`M${cx} 16V8`)).join("")
+   +P("M66 8Q60 2 30 4")+P("M104 8Q120 2 196 6")+P("M120 64H136V80","yel")+C(136,84,4,"ring")+R(72,78,22,12,"glass",2)
+   +L(110,26,140,30,"bushings")+L(140,84,150,100,"handle")+L(83,90,90,136,"op. counter"),
+ "cap":POLE()+R(24,112,172,6,"metal")
+   +[40,92,144].map(x=>R(x,62,30,50,"tank",2)+R(x+11,44,8,18,"porc",2)+vS(x+15,48,2,8,9,2.5,"porc")+P(`M${x+15} 44V26`)).join("")
+   +P("M55 26H159")+P("M159 26Q180 20 196 8")+L(55,100,55,136,"can")+L(118,118,118,136,"rack"),
+ "xfmr":POLE()+R(24,52,30,5,"metal")+R(24,104,30,5,"metal")+R(52,38,66,92,"tank",8)+R(48,32,74,9,"tank",3)+R(80,10,10,22,"porc",2)+vS(85,14,3,7,9,2.5,"porc")+P("M85 10Q85 2 120 2H196")
+   +[60,80,100].map(y=>R(118,y-4,10,8,"porc",1)+C(131,y,3,"metal")+P(`M134 ${y}Q160 ${y+10} 196 ${y+16}`)).join("")
+   +R(66,74,22,14,"plate",1)+P("M85 130V140H24")
+   +L(92,22,142,24,"primary")+L(124,104,140,128,"X1 X2 X3"),
+ "bush-pri":R(20,122,160,28,"tank")+R(84,114,32,8,"metal",1)+R(92,32,16,82,"porc",3)+vS(100,42,6,13,20,4.5,"porc")+R(96,22,8,10,"metal")+C(100,16,5,"w")+P("M105 16Q140 10 196 14")
+   +L(120,68,140,68,"shed")+L(95,16,70,10,"terminal","end")+L(116,118,140,104,"base gasket")+T(30,140,"tank lid"),
+ "bush-sec":R(0,10,60,140,"tank")
+   +[40,80,120].map((y,i)=>R(60,y-7,24,14,"porc",2)+E(68,y,3,10,"porc")+E(77,y,3,10,"porc")+R(84,y-3,16,6,"metal",1)+P(`M100 ${y}Q140 ${y+8} 196 ${y+4}`,"wthick")+T(104,y-8,"X"+(i+1)+(i===1?" (neutral)":""))).join("")
+   +T(6,22,"tank wall"),
+ "deadend":POLE()+R(24,66,10,8,"metal")+R(34,67,8,6,"metal")+R(42,68,78,4,"poly")+hS(50,70,7,10,3.5,12,"poly")+R(118,66,8,8,"metal")+P("M126 64H146L150 70L146 76H126Z","metal")
+   +P("M150 70L196 74","wthick")+P("M140 76Q152 112 118 120Q90 126 60 130")
+   +L(80,58,92,32,"sheds")+L(142,64,150,44,"clamp")+L(104,122,116,140,"jumper"),
+ "pinpost":R(0,110,200,12,"wood")+R(48,96,4,14,"metal")
+   +P("M30 102L70 102L64 92L36 92Z","porc")+P("M34 92L66 92L60 80L40 80Z","porc")+P("M38 80L62 80L56 66L44 66Z","porc")+R(42,57,16,9,"porc",2)
+   +P("M0 60H96","wthick")+P("M40 55L44 65M46 55L50 65M52 55L56 65","tie")
+   +R(133,100,24,10,"metal")+R(140,40,10,60,"poly",2)+vS(145,48,6,9,12,2.5,"poly")+R(136,30,18,10,"metal",2)+P("M104 35H200","wthick")
+   +T(50,140,"pin","middle")+T(145,140,"line post","middle"),
+ "spool":POLE()+R(24,24,6,112,"metal")+R(44,24,3,112,"metal")
+   +[40,80,120].map(cy=>spool(32,cy)+P(`M36 ${cy}Q120 ${cy+8} 196 ${cy+4}`,"wthick")).join("")
+   +L(58,34,90,18,"spool")+L(30,132,60,144,"secondary rack"),
+ "al":R(8,60,104,20,"al",2)+stripes()+C(160,70,5,"steel")+ring(160,70,6,10,5,"steel")+ring(160,70,12,20,5,"al")
+   +L(158,66,147,30,"steel core","end")+L(172,88,150,118,"aluminum","end")+L(60,80,60,105,"strand lay"),
+ "cu":R(8,60,104,20,"cu",2)+stripes()+C(160,70,5,"cu")+ring(160,70,6,10,5,"cu")+ring(160,70,12,20,5,"cu")
+   +L(172,88,150,118,"all copper","end")+L(60,80,60,105,"strand lay"),
+ "spacer":P("M0 25H200","wthick")+[48,62,80].map(y=>P(`M0 ${y}H200`,"jkt")).join("")
+   +[55,150].map(x=>P(`M${x} 25L${x+12} 50L${x+8} 86L${x-8} 86L${x-12} 50Z`,"poly")+[48,62,80].map(y=>C(x,y,4,"metal")).join("")).join("")
+   +L(100,25,110,12,"bare messenger")+L(55,86,55,108,"spacer")+L(110,80,110,122,"covered phases"),
+ "ug-pri":`<rect x="0" y="128" width="200" height="22" class="earth"/><line x1="0" y1="128" x2="200" y2="128" class="gnd"/>`+POLE(84,18,0,128)
+   +R(102,58,10,70,"conduit",1)+R(103,30,8,28,"poly",2)+vS(107,34,4,6,7,2,"poly")+P("M107 30V18Q110 6 150 6H196")+P("M107 128V138Q107 144 120 144H196","ugc")
+   +L(115,40,135,40,"termination")+L(112,95,135,95,"U-guard")+T(150,140,"cable"),
+ "open":POLE()+R(24,24,6,112,"metal")+R(44,24,3,112,"metal")
+   +[40,80,120].map(cy=>spool(32,cy)+P(`M36 ${cy}Q120 ${cy+12} 196 ${cy+4}`,"wthick")).join("")
+   +T(196,32,"hot","end")+T(196,72,"neutral","end")+T(196,112,"hot","end"),
+ "triplex":POLE()+R(24,66,14,8,"metal")+P("M38 70H196","neu")+P(twist(0),"jkt")+P(twist(1),"jkt")
+   +L(100,60,100,30,"insulated hots")+L(150,72,140,112,"bare neutral","end")+L(31,74,40,130,"dead-end clamp"),
+ "ug-sec":`<rect x="0" y="118" width="200" height="32" class="earth"/><line x1="0" y1="118" x2="200" y2="118" class="gnd"/>`+POLE(40,16,0,118)
+   +R(56,24,8,4,"metal")+R(56,46,8,4,"metal")+R(64,10,40,46,"tank",6)+R(61,6,46,7,"tank",3)
+   +[24,34,44].map(y=>R(104,y-3,7,6,"porc",1)).join("")
+   +R(58,84,8,34,"conduit",1)+R(55,78,14,7,"conduit",3)
+   +[24,34,44].map((y,i)=>P(`M111 ${y}C${132-i*2} ${y} ${128-i*2} ${96+i*2} 100 ${96+i*2}C82 ${96+i*2} 70 92 ${60+i*3} 85`,"jkt3")).join("")
+   +P("M62 118V132Q62 138 74 138H196","ugc")
+   +L(128,82,145,70,"drip loop")+L(69,80,136,108,"weatherhead")+T(72,112,"riser"),
+ "armless":POLE(92,16,30,120)+R(96,8,8,22,"poly",2)+vS(100,12,3,6,8,2,"poly")+C(100,5,4,"al")
+   +R(84,52,8,8,"metal")+R(56,53,28,6,"poly",2)+hS(62,56,4,6,2.5,8,"poly")+C(52,56,4,"al")
+   +R(108,82,8,8,"metal")+R(116,83,28,6,"poly",2)+hS(122,86,4,6,2.5,8,"poly")+C(148,86,4,"al")
+   +L(112,90,130,115,"bracket")+L(62,62,40,100,"post","end")+L(104,16,130,24,"top post"),
+ "arm":POLE(92,16,50,100)+R(10,60,180,12,"wood",1)+C(100,66,2.5,"metal")+pinS(30,60)+pinS(170,60)+pinS(100,50)
+   +L(150,72,140,95,"cross arm")+L(96,24,80,10,"pole-top pin","end"),
+ "brace":POLE(92,16,10,140)+R(10,30,180,14,"wood",1)
+   +P("M40 44L94 100","braceo")+P("M40 44L94 100","brace")+P("M160 44L106 100","braceo")+P("M160 44L106 100","brace")
+   +C(40,40,2.5,"metal")+C(160,40,2.5,"metal")+C(100,100,3,"metal")+C(100,37,3,"metal")
+   +L(60,64,40,90,"brace","end")+L(100,100,130,125,"brace bolt")+L(150,30,140,14,"cross arm","end")
+};
+
+/* ---------- Figure library ---------- */
+const CATS=[
+ ["prot","Protective devices"],["xc","Transformers & capacitors"],["ins","Insulators"],
+ ["cpri","Conductors – primary"],["csec","Conductors – secondary"],["frm","Framing"]];
+const FIGS=[
+ {id:"arr-porc",cat:"prot",name:"Arrester – porcelain",sec:"arr",spot:"Brown or gray glazed body with a few thick sheds, on a bracket next to the cutout or on the transformer tank. A ground lead runs down from the bottom.",watch:["Cracked / shattered housing","Disconnector blown & hanging","Missing ground lead","Flash marks"]},
+ {id:"arr-poly",cat:"prot",name:"Arrester – polymer",sec:"arr",spot:"Slim gray rubber housing with many thin sheds. Narrower and lighter-looking than porcelain.",watch:["Split or bulging housing","Disconnector blown","Tracking / chalky sheds","Missing ground lead"]},
+ {id:"co-porc",cat:"prot",name:"Cutout – porcelain",sec:"co",spot:"Glazed insulator on a pole bracket, with a tan fuse tube (the door) beside it. The top of the tube latches into the top contact.",watch:["Door dropped (blown fuse)","Cracked porcelain","Burnt contacts","Missing barrel"]},
+ {id:"co-poly",cat:"prot",name:"Cutout – polymer",sec:"co",spot:"Same layout as porcelain, but the body is gray polymer with many small sheds.",watch:["Door dropped","Eroded / chalky sheds","Burnt contacts","Bracket loose"]},
+ {id:"recloser",cat:"prot",name:"Recloser",sec:"rec",spot:"Gray tank with two bushings per phase (source and load). Single-phase hydraulic units have a yellow lockout handle and an operations counter. Three-phase units usually have a separate control box lower on the pole.",watch:["Yellow handle down (locked out)","Oil leak","Cracked bushing","Burnt leads"]},
+ {id:"cap",cat:"xc",name:"Capacitor bank",sec:"cap",spot:"Row of rectangular gray cans on a metal rack, each with a bushing on top, fed through a set of cutouts.",watch:["Bulging / swollen can","Oil leak","Blown cap fuse","Cracked bushing"]},
+ {id:"xfmr",cat:"xc",name:"Transformer",sec:"xfmr",spot:"Round gray tank hung on the pole. Primary bushing(s) on the lid (H1/H2), secondary bushings on the side (X1, X2, X3).",watch:["Oil stains on tank or pole","Bulging tank","Cracked bushings","Heavy rust","Loose hangers"]},
+ {id:"bush-pri",cat:"xc",name:"Transformer bushing – primary",sec:"xfmr",spot:"Tall bushing on the tank lid with several sheds and a terminal on top. Often covered by a plastic animal guard.",watch:["Chipped / cracked sheds","Flashover marks","Oil at base gasket","Loose or burnt terminal"]},
+ {id:"bush-sec",cat:"xc",name:"Transformer bushing – secondary",sec:"xfmr",spot:"Short bushings on the side of the tank with spade or eye-bolt terminals. X2 in the middle is usually the neutral.",watch:["Oil seep at base","Cracked bushing","Burnt / loose connector","Missing neutral"]},
+ {id:"deadend",cat:"ins",name:"Dead-end insulator",sec:"ins",spot:"Insulator in line with the wire where the line ends or turns. The wire is held in a clamp and a jumper loops around it.",watch:["Cracked / eroded sheds","Clamp slipping","Broken strands at clamp","Burnt jumper"]},
+ {id:"pinpost",cat:"ins",name:"Pin / post insulator",sec:"ins",spot:"Pin: bell-shaped insulator on a steel pin, wire tied on top. Post: solid insulator bolted to a base, wire in a top clamp.",watch:["Wire off insulator","Broken tie wire","Cracked or chipped","Leaning pin"]},
+ {id:"spool",cat:"ins",name:"Spool insulator",sec:"ins",spot:"Small round spools on a secondary rack bolted to the pole. Carries low-voltage secondary wires.",watch:["Broken spool","Wire off spool","Rack loose / bent","Broken ties"]},
+ {id:"al",cat:"cpri",name:"Aluminum (AAC / ACSR)",sec:"cond",spot:"Bare silver-gray stranded wire. ACSR has a steel core that only shows at a break.",watch:["Broken strands / birdcaging","Burn or arc marks","Uneven sag","Corroded connectors"]},
+ {id:"cu",cat:"cpri",name:"Copper",sec:"cond",spot:"Bare stranded or solid wire, copper-brown when new, green or dark with age. Common on older lines.",watch:["Broken strands","Burnt sections","Loose splices","Low sag"]},
+ {id:"spacer",cat:"cpri",name:"Spacer cable",sec:"cond",spot:"Bare messenger on top, three covered phase wires held by plastic diamond spacers along the span.",watch:["Spacer slipped / broken","Jacket damage or tracking","Tree contact","Messenger damage"]},
+ {id:"ug-pri",cat:"cpri",name:"Underground riser – primary",sec:"cond",spot:"Cable comes up the pole in a U-guard or conduit to a termination with sheds, then on to the arrester and cutout.",watch:["Cracked termination","Tracking / burns","U-guard damaged","Missing ground"]},
+ {id:"open",cat:"csec",name:"Open wire secondary",sec:"sec",spot:"Separate wires spaced on a spool rack (two hots and a neutral), running below the primary.",watch:["Wires touching","Broken spool","Low sag","Tree contact"]},
+ {id:"triplex",cat:"csec",name:"Twisted secondary (triplex)",sec:"sec",spot:"Two black insulated wires twisted around a bare neutral messenger. Quadplex has three insulated wires.",watch:["Insulation worn / cut","Neutral broken","Dead-end slipping","Tree rubbing"]},
+ {id:"ug-sec",cat:"csec",name:"Underground secondary",sec:"sec",spot:"Black cables leave the transformer, make a drip loop, and enter a weatherhead on a conduit running down the pole.",watch:["Damaged weatherhead","Cracked insulation at loop","Conduit broken","Burnt connector"]},
+ {id:"armless",cat:"frm",name:"Armless",sec:"arm",spot:"No cross arm. Post insulators bolt to the pole on standoff brackets, staggered on alternate sides.",watch:["Bracket bent / loose","Post cracked","Wire off clamp","Pole top damage"]},
+ {id:"arm",cat:"frm",name:"Cross arm",sec:"arm",spot:"Horizontal wood or fiberglass arm bolted near the pole top, carrying pin insulators. Often a pole-top pin above.",watch:["Split or rotten arm","Burn marks","Arm not level","Woodpecker holes"]},
+ {id:"brace",cat:"frm",name:"Cross arm brace",sec:"arm",spot:"Two diagonal steel or wood straps from the underside of the arm down to the pole, forming a V.",watch:["Broken / missing brace","Loose bolts","Bent brace","Arm sagging one side"]}
+];
+
+/* ---------- Checklist ---------- */
+const S={crit:"Critical",major:"Major",minor:"Minor"};
+const DATA=[
+ {id:"pco",name:"Silver-top PCO",sub:"Porcelain cutout with silver top cap",figs:["co-porc"],checks:[
+  ["Porcelain body cracked or chipped","Zoom on the full length of the porcelain","major"],
+  ["Fuse door dropped / hanging open","Door should sit closed and latched at the top","major"],
+  ["Silver top cap corroded, split or missing","Check the cap and vent area","minor"],
+  ["Flashover or carbon tracking","Black streaks or burn marks on porcelain","major"],
+  ["Line or load lead burnt, loose or broken","Follow both leads to their terminals","major"],
+  ["Mounting bracket loose or bent","Cutout should sit at its normal angle","minor"]]},
+ {id:"arr",name:"Arrester",sub:"Porcelain or polymer",figs:["arr-porc","arr-poly"],checks:[
+  ["Housing cracked, shattered or blown","Look for split polymer or missing pieces","major"],
+  ["Ground lead disconnector blown / dropped","Bottom isolator separated or hanging","major"],
+  ["Ground lead broken or missing","Trace the ground lead down the pole","major"],
+  ["Tracking or burn marks on housing","Dark streaks along the sheds","major"],
+  ["Line lead loose or burnt","Top terminal and jumper","major"],
+  ["Bracket loose or arrester leaning","Compare angle to other phases","minor"]]},
+ {id:"xfmr",name:"Transformer",sub:"Conventional pole-mount",figs:["xfmr","bush-pri","bush-sec"],checks:[
+  ["Oil leak on tank, bushings or gaskets","Wet, dark or shiny stains on the tank","major"],
+  ["Oil streaks on pole or ground below","Check the pole under the tank and base area","major"],
+  ["Tank bulging or deformed","Lid or sides pushed out of shape","crit"],
+  ["Primary or secondary bushing cracked/chipped","Each bushing, all sides","major"],
+  ["Heavy rust or corrosion","Seams, bottom of tank, cooling fins","minor"],
+  ["Lid / gasket damaged or lifted","Gap or seepage at lid edge","minor"],
+  ["Hanger bracket or bolts loose","Tank sitting level and tight to pole","major"],
+  ["Tank ground missing or broken","Ground strap from tank to neutral","major"],
+  ["Animal guard missing or damaged","Covers on primary bushing","minor"],
+  ["Unit number / nameplate unreadable","Note if ID can't be confirmed","minor"]]},
+ {id:"arm",name:"Framing",sub:"Cross arm, braces or armless",figs:["arm","brace","armless"],checks:[
+  ["Arm split or cracked","Ends and around bolt holes","major"],
+  ["Rot or decay","Soft, dark or crumbling wood, top surface","major"],
+  ["Burn damage","Charring near insulators or hardware","crit"],
+  ["Arm sagging, twisted or not level","Compare both ends to the horizon","major"],
+  ["Braces broken, missing or loose","Both braces down to the pole","major"],
+  ["Woodpecker or insect holes","Holes in arm or upper pole","minor"],
+  ["Through-bolts or hardware loose","Gaps between arm and pole","minor"],
+  ["Armless: standoff bracket bent or loose","Each bracket on the pole","major"]]},
+ {id:"ins",name:"Insulator",sub:"Dead-end, pin/post or spool",figs:["deadend","pinpost","spool"],checks:[
+  ["Conductor off the insulator","Wire resting on arm or hanging","crit"],
+  ["Insulator cracked or broken","Every phase, every insulator","major"],
+  ["Flashover or tracking marks","Glaze burns or dark streaks","major"],
+  ["Tie wire broken, loose or unwrapped","Conductor held firmly in groove","major"],
+  ["Skirts chipped","Small chips on sheds","minor"],
+  ["Pin bent or insulator leaning","Compare to neighbours","minor"],
+  ["Polymer eroded, chalky or split","Sheds and end fittings","minor"]]},
+ {id:"csp",name:"CSP transformer",sub:"Completely self-protected unit",figs:["xfmr"],checks:[
+  ["Overload warning light visible","Red lamp showing on the tank","major"],
+  ["Secondary breaker handle tripped","Handle position vs. normal","major"],
+  ["Oil leak on tank or bushing","Stains, wet spots, drips","major"],
+  ["Tank bulging or deformed","Lid or walls distorted","crit"],
+  ["Integral arrester or primary bushing damaged","Top of tank, primary side","major"],
+  ["Heavy rust or corrosion","Seams and tank bottom","minor"]]},
+ {id:"sec",name:"Secondary connection",sub:"Open wire, triplex or underground",figs:["open","triplex","ug-sec"],checks:[
+  ["Conductor loose or disconnected","Any lead hanging or pulled out","crit"],
+  ["Neutral broken or damaged","Bare neutral intact end to end","crit"],
+  ["Connector burnt, melted or discoloured","Heat marks at clamps and taps","major"],
+  ["Triplex insulation damaged or worn","Cuts, rubs, exposed conductor","major"],
+  ["Service drop sagging or in tree contact","Clearance and vegetation","major"],
+  ["Connectors corroded","Green/white buildup","minor"]]},
+ {id:"co",name:"Cutouts",sub:"Porcelain or polymer",figs:["co-porc","co-poly"],checks:[
+  ["Fuse door open / dropped (blown fuse)","Door swung down out of the top contact","major"],
+  ["Fuse barrel missing","Empty cutout body","major"],
+  ["Door misaligned or partly open","Door not fully seated","major"],
+  ["Porcelain / polymer body cracked","Full length of body","major"],
+  ["Arc damage on contacts","Pitting or burns at top/bottom contact","major"],
+  ["Tracking or burn marks","Streaks on body","major"],
+  ["Bracket loose or cutout leaning","Mounting angle","minor"]]},
+ {id:"rec",name:"Recloser",sub:"Single- or three-phase",figs:["recloser"],checks:[
+  ["Lockout handle down (yellow handle pulled)","Compare handle to normal position","major"],
+  ["Oil leak on tank","Stains on tank, bracket or pole","major"],
+  ["Bushing cracked or flashed","Source and load bushings, each phase","major"],
+  ["Leads or connectors burnt / loose","Both sides of each phase","major"],
+  ["Tank bulging or heavily corroded","Lid and bottom seams","crit"],
+  ["Bypass switches or control cable damaged","Bypass blades and cable down the pole","minor"]]},
+ {id:"cap",name:"Capacitor",sub:"Capacitor bank",figs:["cap"],checks:[
+  ["Can bulging or ruptured","Sides of each can should be flat","crit"],
+  ["Oil leak on can","Stains on can or rack","major"],
+  ["Cap fuse blown / cutout door dropped","Each phase's cutout","major"],
+  ["Bushing cracked or chipped","Top of each can","major"],
+  ["Leads burnt or disconnected","Leads from cutouts to cans","major"],
+  ["Rack bent, loose or corroded","Rack bolts to pole","minor"]]},
+ {id:"cond",name:"Primary conductors",sub:"Aluminum, copper, spacer or underground",figs:["al","cu","spacer","ug-pri"],checks:[
+  ["Broken strands or birdcaging","Near clamps, ties and splices","major"],
+  ["Burn or arc marks on conductor","Pitting, discoloured spots","major"],
+  ["Uneven sag / low clearance","Compare phases across the span","major"],
+  ["Spacer cable: spacer slipped or broken","Spacers evenly placed and intact","major"],
+  ["Covered conductor jacket damaged","Cuts, tracking, tree rub","major"],
+  ["Riser termination cracked or tracking","Sheds and cable entry","major"],
+  ["U-guard / conduit damaged","Full length down the pole","minor"]]},
+ {id:"pole",name:"Pole & surroundings",sub:"Last sweep for anything else major",figs:[],checks:[
+  ["Pole leaning, cracked or burnt","Full pole, top to ground","crit"],
+  ["Vegetation touching lines or equipment","Branches in contact or very close","major"],
+  ["Foreign object on lines (balloon, kite, debris)","All conductors in frame","major"],
+  ["Animal nest on equipment","Arm, transformer, cutouts","minor"],
+  ["Guy wire slack, broken or missing guard","Down guys and anchors","minor"]]}
+];
+const FIGMAP=Object.fromEntries(FIGS.map(f=>[f.id,f]));
+
+const KEY="pole-check-v1";
+let st=load();
+function blank(){return {pole:"",img:"",marks:{},na:{},open:"pco"}}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.marks)return s}catch(e){}return blank()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+const reduce=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const secEl=document.getElementById("sections");
+function render(){
+  secEl.innerHTML=DATA.map((s,si)=>{
+    const rows=s.checks.map((c,ci)=>{
+      const k=s.id+"-"+ci, m=st.marks[k]||{}, fault=m.v==="fault";
+      return `<div class="check" data-k="${k}">
+        <div class="ctext"><b>${esc(c[0])}</b><span class="sev ${c[2]}">${S[c[2]]}</span><span class="look">${esc(c[1])}</span></div>
+        <div class="seg" role="group" aria-label="${esc(c[0])}">
+          <button type="button" class="ok" data-a="ok" aria-pressed="${m.v==="ok"}">OK</button>
+          <button type="button" class="fault" data-a="fault" aria-pressed="${fault}">Fault</button>
+        </div>
+        ${fault?`<div class="fault-box">
+          <select id="sev-${k}" data-a="sev" aria-label="Severity">${Object.keys(S).map(x=>`<option value="${x}" ${(m.sev||c[2])===x?"selected":""}>${S[x]}</option>`).join("")}</select>
+          <input id="note-${k}" data-a="note" placeholder="Note: phase, image #, what you see" value="${esc(m.note||"")}">
+        </div>`:""}
+      </div>`}).join("");
+    const figs=s.figs.length?`<div class="figlinks">Figures ${s.figs.map(f=>`<button type="button" data-fig="${f}">${esc(FIGMAP[f].name)}</button>`).join("")}</div>`:"";
+    return `<details class="sec" id="sec-${s.id}" ${st.open===s.id?"open":""}>
+      <summary><span class="num">${si+1}</span><span class="sname">${esc(s.name)}<em>${esc(s.sub)}</em></span><span class="scount" id="cnt-${s.id}"></span></summary>
+      <div class="body ${st.na[s.id]?"disabled":""}">
+        <div class="toprow"><label class="natoggle"><input type="checkbox" id="na-${s.id}" data-na="${s.id}" ${st.na[s.id]?"checked":""}> Not on this pole</label>${figs}</div>
+        ${rows}
+      </div></details>`}).join("");
+  update();
+}
+function secStatus(s){
+  if(st.na[s.id])return {state:"na",done:s.checks.length,total:s.checks.length,faults:0};
+  let done=0,faults=0;
+  s.checks.forEach((c,ci)=>{const m=st.marks[s.id+"-"+ci];if(m&&m.v){done++;if(m.v==="fault")faults++}});
+  return {state:faults?"fault":done===s.checks.length?"done":"open",done,total:s.checks.length,faults};
+}
+function update(){
+  let D=0,T=0,n={crit:0,major:0,minor:0};
+  DATA.forEach(s=>{
+    const r=secStatus(s);D+=r.done;T+=r.total;
+    document.getElementById("sec-"+s.id).dataset.state=r.state;
+    document.getElementById("cnt-"+s.id).textContent=r.state==="na"?"N/A":`${r.done}/${r.total}${r.faults?` · ${r.faults}⚠`:""}`;
+    if(!st.na[s.id])s.checks.forEach((c,ci)=>{const m=st.marks[s.id+"-"+ci];if(m&&m.v==="fault")n[m.sev||c[2]]++});
+  });
+  document.getElementById("prog").textContent=`${D} / ${T} checked`;
+  document.getElementById("barFill").style.width=(T?D/T*100:0)+"%";
+  document.getElementById("nCrit").textContent=n.crit+" critical";
+  document.getElementById("nMajor").textContent=n.major+" major";
+  document.getElementById("nMinor").textContent=n.minor+" minor";
+  document.getElementById("reportText").textContent=report(D,T);
+  save();
+}
+function report(D,T){
+  const d=new Date().toISOString().slice(0,10);
+  let out=`POLE: ${st.pole||"(no ID)"}\nIMAGES: ${st.img||"-"}\nDATE: ${d}\nCHECKED: ${D}/${T}\n`;
+  const faults=[],skipped=[],missing=[];
+  DATA.forEach(s=>{
+    if(st.na[s.id]){skipped.push(s.name);return}
+    s.checks.forEach((c,ci)=>{const m=st.marks[s.id+"-"+ci];
+      if(!m||!m.v)missing.push(`${s.name}: ${c[0]}`);
+      else if(m.v==="fault")faults.push({sev:m.sev||c[2],t:`${s.name} – ${c[0]}${m.note?` (${m.note})`:""}`});});
+  });
+  const order={crit:0,major:1,minor:2};faults.sort((a,b)=>order[a.sev]-order[b.sev]);
+  out+=`\nFAULTS (${faults.length}):\n`+(faults.length?faults.map(f=>`  [${S[f.sev].toUpperCase()}] ${f.t}`).join("\n"):"  None found")+"\n";
+  if(skipped.length)out+=`\nNOT ON POLE: ${skipped.join(", ")}\n`;
+  if(missing.length)out+=`\n⚠ NOT YET CHECKED (${missing.length}):\n`+missing.map(x=>"  - "+x).join("\n")+"\n";
+  return out;
+}
+
+secEl.addEventListener("click",e=>{
+  const fb=e.target.closest("button[data-fig]");if(fb){goFig(fb.dataset.fig);return}
+  const b=e.target.closest("button[data-a]");if(!b)return;
+  const k=b.closest(".check").dataset.k, m=st.marks[k]||(st.marks[k]={});
+  m.v=m.v===b.dataset.a?undefined:b.dataset.a;
+  const sid=k.split("-")[0], s=DATA.find(x=>x.id===sid);
+  render();
+  if(secStatus(s).done===s.checks.length&&b.dataset.a==="ok"){
+    const i=DATA.indexOf(s), nx=DATA.slice(i+1).find(x=>secStatus(x).state==="open");
+    if(nx){st.open=nx.id;render();document.getElementById("sec-"+nx.id).scrollIntoView({block:"start",behavior:reduce()?"auto":"smooth"})}
+  }
+});
+secEl.addEventListener("input",e=>{
+  const a=e.target.dataset.a;if(a!=="sev"&&a!=="note")return;
+  const k=e.target.closest(".check").dataset.k;st.marks[k][a]=e.target.value;update();
+});
+secEl.addEventListener("change",e=>{const id=e.target.dataset.na;if(!id)return;st.na[id]=e.target.checked;render()});
+secEl.addEventListener("toggle",e=>{if(e.target.open){st.open=e.target.id.slice(4);save()}},true);
+
+const poleEl=document.getElementById("poleId"),imgEl=document.getElementById("imgRef");
+poleEl.value=st.pole;imgEl.value=st.img;
+poleEl.addEventListener("input",()=>{st.pole=poleEl.value;update()});
+imgEl.addEventListener("input",()=>{st.img=imgEl.value;update()});
+const cb=document.getElementById("confirmBox");
+document.getElementById("newPole").onclick=()=>{cb.hidden=false};
+document.getElementById("confirmNo").onclick=()=>{cb.hidden=true};
+document.getElementById("confirmYes").onclick=()=>{st=blank();poleEl.value="";imgEl.value="";cb.hidden=true;render();window.scrollTo(0,0)};
+document.getElementById("copyBtn").onclick=()=>{
+  const pre=document.getElementById("reportText"),toast=document.getElementById("toast");
+  const sel=()=>{const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);toast.textContent="Selected – copy it"};
+  try{navigator.clipboard.writeText(pre.textContent).then(()=>{toast.textContent="Copied"},sel)}catch(e){sel()}
+  setTimeout(()=>toast.textContent="",2500);
+};
+
+/* ---------- Figures view ---------- */
+const secName=id=>DATA.find(d=>d.id===id)?.name||"";
+document.getElementById("figs").innerHTML=CATS.map(([cid,cname])=>`<section class="cat"><h2 id="cat-${cid}">${cname}</h2><div class="grid">${
+  FIGS.filter(f=>f.cat===cid).map(f=>`<article class="fig" id="fig-${f.id}">
+    ${svg(SVG[f.id],esc(f.name))}
+    <h3>${esc(f.name)}</h3>
+    <div><div class="lbl">Spot it</div><p>${esc(f.spot)}</p></div>
+    <div><div class="lbl">Watch for</div><div class="watch">${f.watch.map(w=>`<span>${esc(w)}</span>`).join("")}</div></div>
+    <button type="button" class="btn sm" data-sec="${f.sec}">Check: ${esc(secName(f.sec))} →</button>
+  </article>`).join("")}</div></section>`).join("");
+document.getElementById("catnav").innerHTML=CATS.map(([cid,cname])=>`<button type="button" data-cat="${cid}">${cname}</button>`).join("");
+document.getElementById("catnav").addEventListener("click",e=>{const b=e.target.closest("[data-cat]");if(b)document.getElementById("cat-"+b.dataset.cat).scrollIntoView({behavior:reduce()?"auto":"smooth"})});
+document.getElementById("figs").addEventListener("click",e=>{const b=e.target.closest("[data-sec]");if(b)goSec(b.dataset.sec)});
+
+function show(v){
+  if(v!=="figures")v="checklist";
+  document.getElementById("view-checklist").hidden=v!=="checklist";
+  document.getElementById("view-figures").hidden=v!=="figures";
+  document.getElementById("ckHead").hidden=v!=="checklist";
+  document.getElementById("figHead").hidden=v!=="figures";
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.view===v));
+}
+function setView(v){if(location.hash!=="#"+v)location.hash=v;show(v)}
+document.querySelector(".tabs").addEventListener("click",e=>{const b=e.target.closest("[data-view]");if(b){setView(b.dataset.view);window.scrollTo(0,0)}});
+window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
+function goFig(id){
+  setView("figures");const el=document.getElementById("fig-"+id);
+  el.scrollIntoView({block:"start",behavior:"auto"});el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1600);
+}
+function goSec(id){
+  st.open=id;setView("checklist");render();
+  document.getElementById("sec-"+id).scrollIntoView({block:"start",behavior:"auto"});
+}
+
+render();
+show(location.hash.slice(1));
+</script>
+
+</body>
+</html>
