@@ -21,7 +21,7 @@
   --sky:#e3eaf0; --ink:#2b3238; --wire:#2b3238; --wood:#a77c4f; --porc:#8a4b2c; --poly:#8b949b;
   --metal:#a7b0b7; --tank:#93a3ab; --cu:#c27a3a; --al:#c3c9ce; --steel:#6c757c; --jacket:#2a2f33;
   --tube:#b98a4a; --yel:#e0b000; --conduit:#9aa4ab; --earth:#cdbd9f; --glass:#dfe8ee; --plate:#f4f6f7; --neu:#8d969d;
-  --leaf:#4f8a3e; --leaf2:#73a85a; --bark:#6b4a2e; --dead:#8a7d6c;
+  --leaf:#4f8a3e; --leaf2:#73a85a; --bark:#6b4a2e; --dead:#8a7d6c; --guard:#4c5c6b;
   /* thermal (ironbow) palette: same in both themes, like a real IR camera */
   --ir-bg:#160a2e; --ir-dim:#4a2a78; --ir-mid:#7a3378; --ir-mag:#c8336c; --ir-or:#ff8a1f; --ir-yel:#ffe76a; --ir-white:#ffffff; --ir-txt:#f4f0ff;
   --display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
@@ -35,7 +35,7 @@
   --sky:#1f2931; --ink:#0b0f13; --wire:#d3dae0; --wood:#8a6640; --porc:#a05a37; --poly:#76808a;
   --metal:#8f99a1; --tank:#6d7d86; --cu:#b86f30; --al:#aab2b8; --steel:#4f585f; --jacket:#59636a;
   --tube:#a77a3e; --yel:#e6bd1a; --conduit:#7e8990; --earth:#4a4031; --glass:#34414b; --plate:#c9d1d6; --neu:#b7c0c6;
-  --leaf:#3f7432; --leaf2:#5b8f47; --bark:#5a3e27; --dead:#7a6e60;
+  --leaf:#3f7432; --leaf2:#5b8f47; --bark:#5a3e27; --dead:#7a6e60; --guard:#71849a;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#12171c; --panel:#1b2228; --fg:#e7ebee; --muted:#9aa5af; --line:#2c353d;
@@ -45,7 +45,7 @@
   --sky:#1f2931; --ink:#0b0f13; --wire:#d3dae0; --wood:#8a6640; --porc:#a05a37; --poly:#76808a;
   --metal:#8f99a1; --tank:#6d7d86; --cu:#b86f30; --al:#aab2b8; --steel:#4f585f; --jacket:#59636a;
   --tube:#a77a3e; --yel:#e6bd1a; --conduit:#7e8990; --earth:#4a4031; --glass:#34414b; --plate:#c9d1d6; --neu:#b7c0c6;
-  --leaf:#3f7432; --leaf2:#5b8f47; --bark:#5a3e27; --dead:#7a6e60;
+  --leaf:#3f7432; --leaf2:#5b8f47; --bark:#5a3e27; --dead:#7a6e60; --guard:#71849a;
   color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--display);font-size:16px;line-height:1.4}
@@ -132,9 +132,9 @@ summary::-webkit-details-marker{display:none}
 /* figures */
 .catnav{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}
 .catnav button{font:inherit;font-size:13px;font-weight:600;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}
-.cat h2{font-size:15px;letter-spacing:.09em;text-transform:uppercase;margin:26px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--fg);scroll-margin-top:190px}
+.cat h2{font-size:15px;letter-spacing:.09em;text-transform:uppercase;margin:26px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--fg);scroll-margin-top:230px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
-.fig{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px;scroll-margin-top:190px;min-width:0}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px;scroll-margin-top:230px;min-width:0}
 .fig.flash{outline:3px solid var(--accent);outline-offset:2px}
 .fig h3{margin:0;font-size:17px;font-weight:700;line-height:1.2}
 .fig p{margin:0;font-size:14px;color:var(--muted)}
@@ -182,6 +182,18 @@ summary::-webkit-details-marker{display:none}
 .fall{fill:none;stroke:var(--crit);stroke-width:1.5;stroke-dasharray:4 3}
 .bminor{fill:var(--minor-bg);stroke:var(--minor)} .bmajor{fill:var(--major-bg);stroke:var(--major)} .bcrit{fill:var(--crit);stroke:var(--crit)}
 .axis{stroke:var(--fg);stroke-width:1}
+.guard{fill:var(--guard);fill-opacity:.85;stroke:var(--ink);stroke-width:1}
+.spike{stroke:var(--metal);stroke-width:1.5;stroke-linecap:round}
+.gguard{fill:none;stroke:var(--yel);stroke-width:7;stroke-linecap:round}
+.rod,.stir{fill:none;stroke:var(--metal);stroke-width:3;stroke-linecap:round}
+.wcu{fill:none;stroke:var(--cu);stroke-width:2}
+.crack{fill:none;stroke:var(--ink);stroke-width:1.4}
+.hole{fill:var(--ink)}
+.rot{fill:var(--dead);stroke:var(--ink);stroke-width:.8}
+.brand{fill:none;stroke:var(--ink);stroke-width:.8}
+.lbs{fill:var(--ink);font:600 5.5px var(--mono)}
+.cathead{margin:14px 0 0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:4px}
+.catsub{margin:-4px 0 10px;font-size:13px;color:var(--muted)}
 @media (max-width:480px){.fault-box{grid-template-columns:1fr}.check{grid-template-columns:1fr}.seg{justify-self:start}}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
 </style>
@@ -288,12 +300,12 @@ const irFrame=(id,body)=>irDefs(id)+R(0,0,200,150,"irbg")+body+`<rect x="186" y=
 const crown=(cx,cy,s)=>C(cx,cy,14*s,"leaf")+C(cx-12*s,cy+6*s,11*s,"leaf2")+C(cx+12*s,cy+5*s,11*s,"leaf2")+C(cx-5*s,cy-9*s,10*s,"leaf")+C(cx+7*s,cy-8*s,10*s,"leaf2");
 const tx=t=>20+t*160/30;
 
-function cutout(cls,poly){
+function cutout(cls,poly,lab=true){
   return POLE()+R(24,70,36,5,"metal")+R(58,28,16,92,cls,3)+(poly?vS(66,34,10,9,11,2.5,cls):vS(66,38,6,15,13,3.5,cls))
    +R(66,20,50,6,"metal")+R(108,15,24,14,"metal",3)+R(66,118,48,6,"metal")
    +P("M113 121L121 32","tubeo")+P("M113 121L121 32","tube")+C(113,121,5,"metal")+C(124,26,4,"w")
    +P("M132 22H196")+P("M113 126Q122 146 196 140")
-   +L(119,80,140,80,"fuse door")+L(118,121,140,110,"hinge")+L(110,16,98,8,"top contact","end");
+   +(lab?L(119,80,140,80,"fuse door")+L(118,121,140,110,"hinge")+L(110,16,98,8,"top contact","end"):"");
 }
 
 const SVG={
@@ -387,13 +399,48 @@ const SVG={
    +L(92,110,60,120,"vine","end")+L(116,40,80,20,"reaching tank","end"),
  "veg-hazard":POLE()+P("M24 56Q110 66 200 56","wthick")+P("M175 150L140 40","deadt")+P("M158 95L140 85M155 84L170 72M149 68L136 58M146 58L156 46","deadb")
    +P("M140 40A115 115 0 0 0 104 62","fall")+P("M104 62l2 -7M104 62l7 -2","fall")
-   +L(122,44,90,20,"fall path","end")+L(162,110,150,135,"dead tree")
+   +L(122,44,90,20,"fall path","end")+L(162,110,150,135,"dead tree"),
+ "anim-bushing":R(20,110,160,40,"tank")+R(14,104,172,8,"tank",3)+R(92,52,16,52,"porc",3)+vS(100,62,4,11,18,4,"porc")
+   +P("M100 30Q130 14 196 16")+P("M66 66Q100 6 134 66Z","guard")+L(128,52,150,70,"guard")+L(108,90,140,92,"bushing")+T(24,140,"transformer lid"),
+ "anim-cover":cutout("porc",false,false)+P("M102 8Q120 -2 138 8L138 34L102 34Z","guard")+R(140,17,44,10,"guard",5)+R(70,122,40,6,"guard",3)
+   +L(108,6,96,6,"cutout cover","end")+L(170,27,196,50,"line cover","end"),
+ "anim-perch":POLE(92,16,50,100)+R(10,60,180,12,"wood",1)+pinS(30,60)+pinS(170,60)+pinS(100,50)
+   +[46,52,58,64,70,76,124,130,136,142,148,154].map(x=>`<line x1="${x}" y1="60" x2="${x+(x<100?-2:2)}" y2="49" class="spike"/>`).join("")
+   +P("M88 34Q100 14 112 34L112 50L88 50Z","guard")+L(55,72,50,95,"spikes","end")+L(112,30,140,20,"pin cover"),
+ "guy-down":`<rect x="0" y="128" width="200" height="22" class="earth"/><line x1="0" y1="128" x2="200" y2="128" class="gnd"/>`+POLE(30,16,0,128)
+   +R(46,18,6,8,"metal")+P("M50 22L170 128")+P("M150 110L168 126","gguard")+P("M170 128L186 148","rod")
+   +L(100,66,120,50,"down guy")+L(152,114,127,104,"guy guard","end")+T(120,145,"anchor rod"),
+ "guy-ins":POLE()+R(24,6,6,6,"metal")+P("M30 10L70 44")+P("M70 44L120 86","tubeo")+P("M70 44L120 86","tube")+C(70,44,3,"metal")+C(120,86,3,"metal")+P("M120 86L190 146")
+   +L(100,70,118,52,"strain")+T(121,65,"insulator")+T(108,140,"lower guy"),
+ "guy-span":POLE(20,14)+POLE(166,14)+R(34,14,6,6,"metal")+R(160,26,6,6,"metal")+P("M40 18Q100 26 160 30")+P("M34 52Q100 64 166 52","wthick")+P("M34 64Q100 76 166 64","wthick")
+   +L(100,24,100,8,"span guy")+L(100,72,100,96,"primary"),
+ "hw-hotclamp":P("M0 40H200","wthick")+R(120,33,20,12,"metal",2)+P("M124 45V70M136 45V70","stir")+P("M124 70Q130 76 136 70","stir")
+   +R(122,70,16,14,"metal",2)+C(130,92,5,"w")+P("M138 78Q160 100 170 150")
+   +L(60,40,60,20,"main conductor")+L(124,58,100,58,"stirrup","end")+L(122,77,100,96,"hot line clamp","end"),
+ "hw-splice":R(8,66,64,18,"al",2)+R(128,66,64,18,"al",2)+Array.from({length:8},(_,i)=>`<line x1="${10+i*8}" y1="84" x2="${18+i*8}" y2="66" class="strand"/><line x1="${130+i*8}" y1="84" x2="${138+i*8}" y2="66" class="strand"/>`).join("")
+   +R(66,62,68,26,"metal",4)+[78,92,106,120].map(x=>R(x-2,62,4,26,"steel")).join("")
+   +L(100,62,100,40,"compression sleeve")+L(40,84,40,110,"conductor")+L(120,88,120,110,"crimps"),
+ "hw-bolt":R(62,0,62,150,"wood")+R(34,58,28,34,"wood",1)+P("M30 75H150","rod")+R(26,67,8,16,"metal",1)+R(124,61,6,28,"metal")+R(130,67,8,16,"metal",1)
+   +`<path d="M140 71v8M144 71v8M148 71v8" class="strand"/>`+L(30,67,30,40,"head")+L(127,61,140,40,"washer")+L(134,83,150,100,"nut")+T(48,108,"arm","middle")+T(93,140,"pole","middle"),
+ "hw-ground":`<rect x="0" y="128" width="200" height="22" class="earth"/><line x1="0" y1="128" x2="200" y2="128" class="gnd"/>`+R(80,0,22,128,"wood")
+   +P("M103 10H160")+P("M103 10V128","wcu")+R(101,48,6,80,"poly",2)+R(101,128,4,22,"cu")
+   +[20,32].map(y=>`<path d="M100 ${y}h6" class="tie"/>`).join("")
+   +L(104,24,130,24,"ground wire")+L(107,80,130,80,"molding")+L(105,140,130,140,"ground rod")+T(160,6,"to neutral","end"),
+ "pole-top":R(70,30,60,120,"wood")+R(66,22,68,10,"metal",2)+P("M84 34L86 52L83 70L86 92","crack")+P("M120 36L118 48","crack")+C(115,80,3,"hole")+C(109,98,2.5,"hole")+C(118,104,2,"hole")
+   +L(130,27,150,16,"pole cap")+L(84,60,60,60,"split","end")+L(118,80,145,86,"woodpecker")+T(148,99,"holes"),
+ "pole-base":`<rect x="0" y="100" width="200" height="50" class="earth"/><line x1="0" y1="100" x2="200" y2="100" class="gnd"/>`+R(80,0,40,150,"wood")
+   +P("M80 86Q86 96 80 112L80 86Z M120 84Q112 96 120 114L120 84Z","rot")+R(80,92,40,14,"rot")+`<path d="M84 96h10M98 100h14M88 104h8" class="crack"/>`
+   +L(120,96,140,86,"decay")+T(6,96,"ground line"),
+ "pole-tag":R(80,0,40,150,"wood")+R(84,40,32,14,"plate",1)+T(100,49,"P-10458","middle").replace('class="lb"','class="lbs"')
+   +R(87,82,26,22,"brand")+T(100,91,"SP 45-3","middle").replace('class="lb"','class="lbs"')+T(100,100,"2004","middle").replace('class="lb"','class="lbs"')
+   +L(112,47,135,47,"pole ID tag")+L(113,93,135,93,"birthmark")
 };
 
 /* ---------- Figure library ---------- */
 const CATS=[
- ["prot","Protective devices"],["xc","Transformers & capacitors"],["ins","Insulators"],
- ["cpri","Conductors – primary"],["csec","Conductors – secondary"],["frm","Framing"],["ir","Thermal (IR)"],["veg","Vegetation"]];
+ ["anim","Animal Mitigation"],["cond","Conductors"],["frm","Framing"],["guy","Guying"],["hw","Hardware & Accessories"],
+ ["ins","Insulators"],["pole","Poles"],["prot","Protective Devices"],["xc","Transformers & Capacitors"],["veg","Vegetation"],
+ ["ir","Thermal (IR)","Inspection method – applies across all categories"]];
 const FIGS=[
  {id:"arr-porc",cat:"prot",name:"Arrester – porcelain",sec:"arr",spot:"Brown or gray glazed body with a few thick sheds, on a bracket next to the cutout or on the transformer tank. A ground lead runs down from the bottom.",watch:["Cracked / shattered housing","Disconnector blown & hanging","Missing ground lead","Flash marks"]},
  {id:"arr-poly",cat:"prot",name:"Arrester – polymer",sec:"arr",spot:"Slim gray rubber housing with many thin sheds. Narrower and lighter-looking than porcelain.",watch:["Split or bulging housing","Disconnector blown","Tracking / chalky sheds","Missing ground lead"]},
@@ -407,13 +454,13 @@ const FIGS=[
  {id:"deadend",cat:"ins",name:"Dead-end insulator",sec:"ins",spot:"Insulator in line with the wire where the line ends or turns. The wire is held in a clamp and a jumper loops around it.",watch:["Cracked / eroded sheds","Clamp slipping","Broken strands at clamp","Burnt jumper"]},
  {id:"pinpost",cat:"ins",name:"Pin / post insulator",sec:"ins",spot:"Pin: bell-shaped insulator on a steel pin, wire tied on top. Post: solid insulator bolted to a base, wire in a top clamp.",watch:["Wire off insulator","Broken tie wire","Cracked or chipped","Leaning pin"]},
  {id:"spool",cat:"ins",name:"Spool insulator",sec:"ins",spot:"Small round spools on a secondary rack bolted to the pole. Carries low-voltage secondary wires.",watch:["Broken spool","Wire off spool","Rack loose / bent","Broken ties"]},
- {id:"al",cat:"cpri",name:"Aluminum (AAC / ACSR)",sec:"cond",spot:"Bare silver-gray stranded wire. ACSR has a steel core that only shows at a break.",watch:["Broken strands / birdcaging","Burn or arc marks","Uneven sag","Corroded connectors"]},
- {id:"cu",cat:"cpri",name:"Copper",sec:"cond",spot:"Bare stranded or solid wire, copper-brown when new, green or dark with age. Common on older lines.",watch:["Broken strands","Burnt sections","Loose splices","Low sag"]},
- {id:"spacer",cat:"cpri",name:"Spacer cable",sec:"cond",spot:"Bare messenger on top, three covered phase wires held by plastic diamond spacers along the span.",watch:["Spacer slipped / broken","Jacket damage or tracking","Tree contact","Messenger damage"]},
- {id:"ug-pri",cat:"cpri",name:"Underground riser – primary",sec:"cond",spot:"Cable comes up the pole in a U-guard or conduit to a termination with sheds, then on to the arrester and cutout.",watch:["Cracked termination","Tracking / burns","U-guard damaged","Missing ground"]},
- {id:"open",cat:"csec",name:"Open wire secondary",sec:"sec",spot:"Separate wires spaced on a spool rack (two hots and a neutral), running below the primary.",watch:["Wires touching","Broken spool","Low sag","Tree contact"]},
- {id:"triplex",cat:"csec",name:"Twisted secondary (triplex)",sec:"sec",spot:"Two black insulated wires twisted around a bare neutral messenger. Quadplex has three insulated wires.",watch:["Insulation worn / cut","Neutral broken","Dead-end slipping","Tree rubbing"]},
- {id:"ug-sec",cat:"csec",name:"Underground secondary",sec:"sec",spot:"Black cables leave the transformer, make a drip loop, and enter a weatherhead on a conduit running down the pole.",watch:["Damaged weatherhead","Cracked insulation at loop","Conduit broken","Burnt connector"]},
+ {id:"al",cat:"cond",name:"Aluminum (AAC / ACSR)",sec:"cond",spot:"Bare silver-gray stranded wire. ACSR has a steel core that only shows at a break.",watch:["Broken strands / birdcaging","Burn or arc marks","Uneven sag","Corroded connectors"]},
+ {id:"cu",cat:"cond",name:"Copper",sec:"cond",spot:"Bare stranded or solid wire, copper-brown when new, green or dark with age. Common on older lines.",watch:["Broken strands","Burnt sections","Loose splices","Low sag"]},
+ {id:"spacer",cat:"cond",name:"Spacer cable",sec:"cond",spot:"Bare messenger on top, three covered phase wires held by plastic diamond spacers along the span.",watch:["Spacer slipped / broken","Jacket damage or tracking","Tree contact","Messenger damage"]},
+ {id:"ug-pri",cat:"cond",name:"Underground riser – primary",sec:"cond",spot:"Cable comes up the pole in a U-guard or conduit to a termination with sheds, then on to the arrester and cutout.",watch:["Cracked termination","Tracking / burns","U-guard damaged","Missing ground"]},
+ {id:"open",cat:"cond",name:"Open wire secondary",sec:"sec",spot:"Separate wires spaced on a spool rack (two hots and a neutral), running below the primary.",watch:["Wires touching","Broken spool","Low sag","Tree contact"]},
+ {id:"triplex",cat:"cond",name:"Twisted secondary (triplex)",sec:"sec",spot:"Two black insulated wires twisted around a bare neutral messenger. Quadplex has three insulated wires.",watch:["Insulation worn / cut","Neutral broken","Dead-end slipping","Tree rubbing"]},
+ {id:"ug-sec",cat:"cond",name:"Underground secondary",sec:"sec",spot:"Black cables leave the transformer, make a drip loop, and enter a weatherhead on a conduit running down the pole.",watch:["Damaged weatherhead","Cracked insulation at loop","Conduit broken","Burnt connector"]},
  {id:"armless",cat:"frm",name:"Armless",sec:"arm",spot:"No cross arm. Post insulators bolt to the pole on standoff brackets, staggered on alternate sides.",watch:["Bracket bent / loose","Post cracked","Wire off clamp","Pole top damage"]},
  {id:"arm",cat:"frm",name:"Cross arm",sec:"arm",spot:"Horizontal wood or fiberglass arm bolted near the pole top, carrying pin insulators. Often a pole-top pin above.",watch:["Split or rotten arm","Burn marks","Arm not level","Woodpecker holes"]},
  {id:"brace",cat:"frm",name:"Cross arm brace",sec:"arm",spot:"Two diagonal steel or wood straps from the underside of the arm down to the pole, forming a V.",watch:["Broken / missing brace","Loose bolts","Bent brace","Arm sagging one side"]},
@@ -424,27 +471,116 @@ const FIGS=[
  {id:"veg-contact",cat:"veg",name:"Tree contact",sec:"veg",spot:"Branches or leaves touching or resting on a wire. Zoom where the crown meets the conductor; brown or scorched leaves point to contact.",watch:["Leaves touching wire","Scorched leaves","Branch on secondary"]},
  {id:"veg-clear",cat:"veg",name:"Clearance encroachment",sec:"veg",spot:"Growth inside the clearance zone around the wires, even if not touching yet. Judge distance against the cross arm length or pole spacing.",watch:["Growth inside clearance zone","Overhanging limbs","Fast regrowth"]},
  {id:"veg-vine",cat:"veg",name:"Vines on pole",sec:"veg",spot:"Vines climbing the pole, guy wire or equipment. Once they reach a bushing or cutout they can carry current.",watch:["Vine on pole or guy","Vine near cutout or arrester","Vine on transformer"]},
- {id:"veg-hazard",cat:"veg",name:"Hazard tree (fall-in)",sec:"veg",spot:"Dead, leaning or damaged tree tall enough to hit the lines if it falls. Bare gray branches with no leaves in season are a sign.",watch:["Dead or dying tree","Leaning toward lines","Split trunk or hanging limb"]}
+ {id:"veg-hazard",cat:"veg",name:"Hazard tree (fall-in)",sec:"veg",spot:"Dead, leaning or damaged tree tall enough to hit the lines if it falls. Bare gray branches with no leaves in season are a sign.",watch:["Dead or dying tree","Leaning toward lines","Split trunk or hanging limb"]},
+ {id:"anim-bushing",cat:"anim",name:"Bushing animal guard",sec:"anim",spot:"Plastic dome or cover over the transformer's primary bushing, with the lead coming through a slot in the top.",watch:["Guard missing","Guard cracked or displaced","Lead not through slot"]},
+ {id:"anim-cover",cat:"anim",name:"Cutout & line covers",sec:"anim",spot:"Insulated covers on cutout tops, arrester caps and nearby leads, so animals can't bridge from live parts to ground.",watch:["Cover missing or fallen off","Cover split or melted","Exposed jumper"]},
+ {id:"anim-perch",cat:"anim",name:"Perch deterrent & pin cover",sec:"anim",spot:"Spikes or perch guards on the cross arm and covers on the pole-top pin that keep birds from landing between phases.",watch:["Perch guard missing or bent","Nest on arm or equipment","Pin cover missing"]},
+ {id:"guy-down",cat:"guy",name:"Down guy & anchor",sec:"guy",spot:"Wire from the upper pole down to a ground anchor. A yellow guard covers the bottom of the wire near the ground.",watch:["Guy slack or broken","Guard missing","Anchor pulling out","Corroded strands"]},
+ {id:"guy-ins",cat:"guy",name:"Guy strain insulator",sec:"guy",spot:"Fiberglass rod or porcelain insulator set into the guy wire, keeping the lower guy isolated from line voltage.",watch:["Insulator cracked","Rod burnt or tracking","Insulator missing"]},
+ {id:"guy-span",cat:"guy",name:"Span guy",sec:"guy",spot:"Guy wire running pole to pole above the lines, used where a down guy won't fit.",watch:["Span guy slack","Too close to primary","Broken strands"]},
+ {id:"hw-hotclamp",cat:"hw",name:"Hot line clamp & stirrup",sec:"hw",spot:"Tap connection: a stirrup clamped to the main line, with a hot line clamp holding the tap wire.",watch:["Clamp loose or burnt","Stirrup bent","Corroded connection"]},
+ {id:"hw-splice",cat:"hw",name:"Compression splice",sec:"hw",spot:"Metal sleeve joining two conductor ends, crimped in several places along its length.",watch:["Sleeve pulling apart","Birdcaged strands at sleeve","Discoloured sleeve"]},
+ {id:"hw-bolt",cat:"hw",name:"Through bolt & washers",sec:"hw",spot:"Bolts through the pole hold arms, brackets and equipment, with a square washer and nut on the far side.",watch:["Gap at washer","Missing nut","Bolt pulled through","Rust staining"]},
+ {id:"hw-ground",cat:"hw",name:"Pole ground",sec:"hw",spot:"Copper ground wire down the pole, covered by molding near the bottom and connected to a ground rod.",watch:["Ground wire cut or stolen","Molding missing","Wire loose from pole"]},
+ {id:"pole-top",cat:"pole",name:"Pole top",sec:"poles",spot:"Top of the pole above the hardware: cap, top splits and checks, and woodpecker holes show here.",watch:["Split or check at top","Woodpecker holes","Cap missing","Burnt pole top"]},
+ {id:"pole-base",cat:"pole",name:"Ground line",sec:"poles",spot:"Where the pole meets the ground. Look for rot, shell loss, fire damage and erosion around the base.",watch:["Ground-line decay","Erosion or washout","Fire damage","Vehicle damage"]},
+ {id:"pole-tag",cat:"pole",name:"Pole tag & birthmark",sec:"poles",spot:"The pole ID tag, and the birthmark (brand) with height, class and year. Use these to confirm which pole you're reporting.",watch:["Tag missing or unreadable","Tag doesn't match records"]}
 ];
 
 /* ---------- Checklist ---------- */
 const S={crit:"Critical",major:"Major",minor:"Minor"};
 const DATA=[
- {id:"pco",name:"Silver-top PCO",sub:"Porcelain cutout with silver top cap",figs:["co-porc"],checks:[
+ {id:"anim",cat:"Animal Mitigation",name:"Animal mitigation",sub:"Guards, covers and perch deterrents",figs:["anim-bushing","anim-cover","anim-perch"],checks:[
+  ["Bushing animal guard missing or damaged","Primary bushing on each transformer","major"],
+  ["Cutout or arrester cover missing or damaged","Tops of cutouts and arresters","major"],
+  ["Perch guard or pin cover missing","Cross arm top and pole-top pin","minor"],
+  ["Nest on arm or equipment","Arm, transformer, cutouts","major"],
+  ["Animal or carcass on equipment","Signs of contact or electrocution","crit"]]},
+ {id:"cond",cat:"Conductors",name:"Primary conductors",sub:"Aluminum, copper, spacer or underground",figs:["al","cu","spacer","ug-pri"],checks:[
+  ["Broken strands or birdcaging","Near clamps, ties and splices","major"],
+  ["Burn or arc marks on conductor","Pitting, discoloured spots","major"],
+  ["Uneven sag / low clearance","Compare phases across the span","major"],
+  ["Spacer cable: spacer slipped or broken","Spacers evenly placed and intact","major"],
+  ["Covered conductor jacket damaged","Cuts, tracking, tree rub","major"],
+  ["Riser termination cracked or tracking","Sheds and cable entry","major"],
+  ["U-guard / conduit damaged","Full length down the pole","minor"]]},
+ {id:"sec",cat:"Conductors",name:"Secondary conductors",sub:"Open wire, triplex or underground",figs:["open","triplex","ug-sec"],checks:[
+  ["Conductor loose or disconnected","Any lead hanging or pulled out","crit"],
+  ["Neutral broken or damaged","Bare neutral intact end to end","crit"],
+  ["Connector burnt, melted or discoloured","Heat marks at clamps and taps","major"],
+  ["Triplex insulation damaged or worn","Cuts, rubs, exposed conductor","major"],
+  ["Service drop sagging or in tree contact","Clearance and vegetation","major"],
+  ["Connectors corroded","Green/white buildup","minor"]]},
+ {id:"arm",cat:"Framing",name:"Framing",sub:"Cross arm, braces or armless",figs:["arm","brace","armless"],checks:[
+  ["Arm split or cracked","Ends and around bolt holes","major"],
+  ["Rot or decay","Soft, dark or crumbling wood, top surface","major"],
+  ["Burn damage","Charring near insulators or hardware","crit"],
+  ["Arm sagging, twisted or not level","Compare both ends to the horizon","major"],
+  ["Braces broken, missing or loose","Both braces down to the pole","major"],
+  ["Woodpecker or insect holes","Holes in arm or upper pole","minor"],
+  ["Through-bolts or hardware loose","Gaps between arm and pole","minor"],
+  ["Armless: standoff bracket bent or loose","Each bracket on the pole","major"]]},
+ {id:"guy",cat:"Guying",name:"Guying",sub:"Down guys, strain insulators, span guys",figs:["guy-down","guy-ins","guy-span"],checks:[
+  ["Guy slack or broken","Compare tension to other guys","major"],
+  ["Guy guard missing or damaged","Yellow guard near the ground","minor"],
+  ["Anchor pulling out or exposed","Anchor rod at ground line","major"],
+  ["Guy strain insulator cracked or missing","Insulator in the guy wire","major"],
+  ["Guy touching or too close to primary","Clearance from energized wires","crit"],
+  ["Broken strands or corrosion","Full length of guy wire","minor"]]},
+ {id:"hw",cat:"Hardware & Accessories",name:"Hardware & accessories",sub:"Clamps, splices, bolts and grounds",figs:["hw-hotclamp","hw-splice","hw-bolt","hw-ground"],checks:[
+  ["Hot line clamp loose, burnt or corroded","Each tap connection","major"],
+  ["Splice or sleeve pulling apart or discoloured","Along each span","major"],
+  ["Through bolts loose, nut or washer missing","Gap between washer and pole","minor"],
+  ["Equipment hanging by one bolt","Brackets, arms, hangers","crit"],
+  ["Pole ground wire cut, loose or missing","Top to bottom of pole","major"],
+  ["Ground molding missing or damaged","Lower part of pole","minor"]]},
+ {id:"ins",cat:"Insulators",name:"Insulators",sub:"Dead-end, pin/post or spool",figs:["deadend","pinpost","spool"],checks:[
+  ["Conductor off the insulator","Wire resting on arm or hanging","crit"],
+  ["Insulator cracked or broken","Every phase, every insulator","major"],
+  ["Flashover or tracking marks","Glaze burns or dark streaks","major"],
+  ["Tie wire broken, loose or unwrapped","Conductor held firmly in groove","major"],
+  ["Skirts chipped","Small chips on sheds","minor"],
+  ["Pin bent or insulator leaning","Compare to neighbours","minor"],
+  ["Polymer eroded, chalky or split","Sheds and end fittings","minor"]]},
+ {id:"poles",cat:"Poles",name:"Poles",sub:"Top, body, ground line and ID",figs:["pole-top","pole-base","pole-tag"],checks:[
+  ["Pole broken or cracked through","Full pole, top to ground","crit"],
+  ["Pole leaning badly","Compare to vertical and to other poles","major"],
+  ["Top split, burnt or cap missing","Pole top above hardware","major"],
+  ["Woodpecker or insect damage","Holes in upper pole","minor"],
+  ["Ground-line decay, erosion or fire damage","Base of pole","major"],
+  ["Foreign object on lines (balloon, kite, debris)","All conductors in frame","major"],
+  ["Fire, smoke or active arcing visible","Anywhere on the structure or below it","crit"],
+  ["Pole tag missing or doesn't match records","Confirm pole ID","minor"]]},
+ {id:"pco",cat:"Protective Devices",name:"Silver-top PCO",sub:"Porcelain cutout with silver top cap",figs:["co-porc"],checks:[
   ["Porcelain body cracked or chipped","Zoom on the full length of the porcelain","major"],
   ["Fuse door dropped / hanging open","Door should sit closed and latched at the top","major"],
   ["Silver top cap corroded, split or missing","Check the cap and vent area","minor"],
   ["Flashover or carbon tracking","Black streaks or burn marks on porcelain","major"],
   ["Line or load lead burnt, loose or broken","Follow both leads to their terminals","major"],
   ["Mounting bracket loose or bent","Cutout should sit at its normal angle","minor"]]},
- {id:"arr",name:"Arrester",sub:"Porcelain or polymer",figs:["arr-porc","arr-poly"],checks:[
+ {id:"arr",cat:"Protective Devices",name:"Arrester",sub:"Porcelain or polymer",figs:["arr-porc","arr-poly"],checks:[
   ["Housing cracked, shattered or blown","Look for split polymer or missing pieces","major"],
   ["Ground lead disconnector blown / dropped","Bottom isolator separated or hanging","major"],
   ["Ground lead broken or missing","Trace the ground lead down the pole","major"],
   ["Tracking or burn marks on housing","Dark streaks along the sheds","major"],
   ["Line lead loose or burnt","Top terminal and jumper","major"],
   ["Bracket loose or arrester leaning","Compare angle to other phases","minor"]]},
- {id:"xfmr",name:"Transformer",sub:"Conventional pole-mount",figs:["xfmr","bush-pri","bush-sec"],checks:[
+ {id:"co",cat:"Protective Devices",name:"Cutouts",sub:"Porcelain or polymer",figs:["co-porc","co-poly"],checks:[
+  ["Fuse door open / dropped (blown fuse)","Door swung down out of the top contact","major"],
+  ["Fuse barrel missing","Empty cutout body","major"],
+  ["Door misaligned or partly open","Door not fully seated","major"],
+  ["Porcelain / polymer body cracked","Full length of body","major"],
+  ["Arc damage on contacts","Pitting or burns at top/bottom contact","major"],
+  ["Tracking or burn marks","Streaks on body","major"],
+  ["Bracket loose or cutout leaning","Mounting angle","minor"]]},
+ {id:"rec",cat:"Protective Devices",name:"Recloser",sub:"Single- or three-phase",figs:["recloser"],checks:[
+  ["Lockout handle down (yellow handle pulled)","Compare handle to normal position","major"],
+  ["Oil leak on tank","Stains on tank, bracket or pole","major"],
+  ["Bushing cracked or flashed","Source and load bushings, each phase","major"],
+  ["Leads or connectors burnt / loose","Both sides of each phase","major"],
+  ["Tank bulging or heavily corroded","Lid and bottom seams","crit"],
+  ["Bypass switches or control cable damaged","Bypass blades and cable down the pole","minor"]]},
+ {id:"xfmr",cat:"Transformers & Capacitors",name:"Transformer",sub:"Conventional pole-mount",figs:["xfmr","bush-pri","bush-sec"],checks:[
   ["Oil leak on tank, bushings or gaskets","Wet, dark or shiny stains on the tank","major"],
   ["Oil streaks on pole or ground below","Check the pole under the tank and base area","major"],
   ["Tank bulging or deformed","Lid or sides pushed out of shape","crit"],
@@ -455,88 +591,34 @@ const DATA=[
   ["Tank ground missing or broken","Ground strap from tank to neutral","major"],
   ["Animal guard missing or damaged","Covers on primary bushing","minor"],
   ["Unit number / nameplate unreadable","Note if ID can't be confirmed","minor"]]},
- {id:"arm",name:"Framing",sub:"Cross arm, braces or armless",figs:["arm","brace","armless"],checks:[
-  ["Arm split or cracked","Ends and around bolt holes","major"],
-  ["Rot or decay","Soft, dark or crumbling wood, top surface","major"],
-  ["Burn damage","Charring near insulators or hardware","crit"],
-  ["Arm sagging, twisted or not level","Compare both ends to the horizon","major"],
-  ["Braces broken, missing or loose","Both braces down to the pole","major"],
-  ["Woodpecker or insect holes","Holes in arm or upper pole","minor"],
-  ["Through-bolts or hardware loose","Gaps between arm and pole","minor"],
-  ["Armless: standoff bracket bent or loose","Each bracket on the pole","major"]]},
- {id:"ins",name:"Insulator",sub:"Dead-end, pin/post or spool",figs:["deadend","pinpost","spool"],checks:[
-  ["Conductor off the insulator","Wire resting on arm or hanging","crit"],
-  ["Insulator cracked or broken","Every phase, every insulator","major"],
-  ["Flashover or tracking marks","Glaze burns or dark streaks","major"],
-  ["Tie wire broken, loose or unwrapped","Conductor held firmly in groove","major"],
-  ["Skirts chipped","Small chips on sheds","minor"],
-  ["Pin bent or insulator leaning","Compare to neighbours","minor"],
-  ["Polymer eroded, chalky or split","Sheds and end fittings","minor"]]},
- {id:"csp",name:"CSP transformer",sub:"Completely self-protected unit",figs:["xfmr"],checks:[
+ {id:"csp",cat:"Transformers & Capacitors",name:"CSP transformer",sub:"Completely self-protected unit",figs:["xfmr"],checks:[
   ["Overload warning light visible","Red lamp showing on the tank","major"],
   ["Secondary breaker handle tripped","Handle position vs. normal","major"],
   ["Oil leak on tank or bushing","Stains, wet spots, drips","major"],
   ["Tank bulging or deformed","Lid or walls distorted","crit"],
   ["Integral arrester or primary bushing damaged","Top of tank, primary side","major"],
   ["Heavy rust or corrosion","Seams and tank bottom","minor"]]},
- {id:"sec",name:"Secondary connection",sub:"Open wire, triplex or underground",figs:["open","triplex","ug-sec"],checks:[
-  ["Conductor loose or disconnected","Any lead hanging or pulled out","crit"],
-  ["Neutral broken or damaged","Bare neutral intact end to end","crit"],
-  ["Connector burnt, melted or discoloured","Heat marks at clamps and taps","major"],
-  ["Triplex insulation damaged or worn","Cuts, rubs, exposed conductor","major"],
-  ["Service drop sagging or in tree contact","Clearance and vegetation","major"],
-  ["Connectors corroded","Green/white buildup","minor"]]},
- {id:"co",name:"Cutouts",sub:"Porcelain or polymer",figs:["co-porc","co-poly"],checks:[
-  ["Fuse door open / dropped (blown fuse)","Door swung down out of the top contact","major"],
-  ["Fuse barrel missing","Empty cutout body","major"],
-  ["Door misaligned or partly open","Door not fully seated","major"],
-  ["Porcelain / polymer body cracked","Full length of body","major"],
-  ["Arc damage on contacts","Pitting or burns at top/bottom contact","major"],
-  ["Tracking or burn marks","Streaks on body","major"],
-  ["Bracket loose or cutout leaning","Mounting angle","minor"]]},
- {id:"rec",name:"Recloser",sub:"Single- or three-phase",figs:["recloser"],checks:[
-  ["Lockout handle down (yellow handle pulled)","Compare handle to normal position","major"],
-  ["Oil leak on tank","Stains on tank, bracket or pole","major"],
-  ["Bushing cracked or flashed","Source and load bushings, each phase","major"],
-  ["Leads or connectors burnt / loose","Both sides of each phase","major"],
-  ["Tank bulging or heavily corroded","Lid and bottom seams","crit"],
-  ["Bypass switches or control cable damaged","Bypass blades and cable down the pole","minor"]]},
- {id:"cap",name:"Capacitor",sub:"Capacitor bank",figs:["cap"],checks:[
+ {id:"cap",cat:"Transformers & Capacitors",name:"Capacitor",sub:"Capacitor bank",figs:["cap"],checks:[
   ["Can bulging or ruptured","Sides of each can should be flat","crit"],
   ["Oil leak on can","Stains on can or rack","major"],
   ["Cap fuse blown / cutout door dropped","Each phase's cutout","major"],
   ["Bushing cracked or chipped","Top of each can","major"],
   ["Leads burnt or disconnected","Leads from cutouts to cans","major"],
   ["Rack bent, loose or corroded","Rack bolts to pole","minor"]]},
- {id:"cond",name:"Primary conductors",sub:"Aluminum, copper, spacer or underground",figs:["al","cu","spacer","ug-pri"],checks:[
-  ["Broken strands or birdcaging","Near clamps, ties and splices","major"],
-  ["Burn or arc marks on conductor","Pitting, discoloured spots","major"],
-  ["Uneven sag / low clearance","Compare phases across the span","major"],
-  ["Spacer cable: spacer slipped or broken","Spacers evenly placed and intact","major"],
-  ["Covered conductor jacket damaged","Cuts, tracking, tree rub","major"],
-  ["Riser termination cracked or tracking","Sheds and cable entry","major"],
-  ["U-guard / conduit damaged","Full length down the pole","minor"]]},
- {id:"ir",name:"Thermal (IR)",sub:"Compare each part to the same part on other phases",figs:["ir-conn","ir-cutout","ir-bushing","ir-scale"],checks:[
-  ["Connector, clamp or splice hotter than other phases","Note spot temperature and ΔT","major"],
-  ["Cutout contact or hinge hot","Top contact and hinge, each phase","major"],
-  ["Transformer bushing terminal hot","Primary and secondary terminals","major"],
-  ["Arrester warmer than other phases","A warm arrester may be failing","major"],
-  ["Transformer or recloser tank unusually hot or uneven","Compare to similar units nearby","major"],
-  ["ΔT over 15 °C vs. other phases (or over 40 °C above ambient)","Tier 1 – repair now","crit"]]},
- {id:"veg",name:"Vegetation",sub:"Contact, clearance, vines and hazard trees",figs:["veg-contact","veg-clear","veg-vine","veg-hazard"],checks:[
+ {id:"veg",cat:"Vegetation",name:"Vegetation",sub:"Contact, clearance, vines and hazard trees",figs:["veg-contact","veg-clear","veg-vine","veg-hazard"],checks:[
   ["Branch or leaves touching primary wire","Zoom where the crown meets the wire","crit"],
   ["Growth inside clearance zone","Even if not touching yet","major"],
   ["Vines on pole, guy or equipment","Follow vines up the pole","major"],
   ["Dead or leaning tree that could fall into lines","Tree height vs. distance to lines","major"],
   ["Tree contact on secondary or service drop","Secondary and service wires","minor"],
   ["Limbs overhanging the lines","Branches above the conductors","minor"]]},
- {id:"pole",name:"Pole & surroundings",sub:"Last sweep for anything else major",figs:[],checks:[
-  ["Pole leaning, cracked or burnt","Full pole, top to ground","crit"],
-  ["Vegetation touching lines or equipment","Branches in contact or very close","major"],
-  ["Foreign object on lines (balloon, kite, debris)","All conductors in frame","major"],
-  ["Animal nest on equipment","Arm, transformer, cutouts","minor"],
-  ["Guy wire slack, broken or missing guard","Down guys and anchors","minor"],
-  ["Fire, smoke or active arcing visible","Anywhere on the structure or below it","crit"]]}
+ {id:"ir",cat:"Thermal (IR)",name:"Thermal (IR)",sub:"Compare each part to the same part on other phases",figs:["ir-conn","ir-cutout","ir-bushing","ir-scale"],checks:[
+  ["Connector, clamp or splice hotter than other phases","Note spot temperature and ΔT","major"],
+  ["Cutout contact or hinge hot","Top contact and hinge, each phase","major"],
+  ["Transformer bushing terminal hot","Primary and secondary terminals","major"],
+  ["Arrester warmer than other phases","A warm arrester may be failing","major"],
+  ["Transformer or recloser tank unusually hot or uneven","Compare to similar units nearby","major"],
+  ["ΔT over 15 °C vs. other phases (or over 40 °C above ambient)","Tier 1 – repair now","crit"]]}
 ];
 const FIGMAP=Object.fromEntries(FIGS.map(f=>[f.id,f]));
 const T1F={
@@ -569,20 +651,33 @@ const T1F={
  "veg-contact":["Branch touching primary wire","Burn marks or smoke at contact"],
  "veg-clear":["Growth about to touch primary","Scorched leaves near the wire"],
  "veg-vine":["Vine touching primary, cutout or bushing","Vine across arrester or transformer"],
- "veg-hazard":["Dead tree leaning toward lines","Tree cracked or uprooted, could fall now"]
+ "veg-hazard":["Dead tree leaning toward lines","Tree cracked or uprooted, could fall now"],
+ "anim-bushing":["Animal on bushing or contact burns","Flashover marks with guard missing"],
+ "anim-cover":["Animal carcass on equipment","Burnt cover with live part exposed"],
+ "anim-perch":["Large nest touching live parts","Signs of bird electrocution"],
+ "guy-down":["Guy broken and pole leaning","Anchor pulled out of the ground"],
+ "guy-ins":["Insulator broken, guy could be energized","Guy touching primary"],
+ "guy-span":["Span guy down on the lines","Span guy broken"],
+ "hw-hotclamp":["Tap wire burnt off","Arcing at the clamp"],
+ "hw-splice":["Splice separating, wire about to drop","Hot splice over 15 °C ΔT"],
+ "hw-bolt":["Equipment hanging by one bolt","Arm loose and dropping"],
+ "hw-ground":["Ground cut at equipment","Broken ground with damaged neutral"],
+ "pole-top":["Pole top burnt or broken off","Top split letting hardware pull out"],
+ "pole-base":["Pole broken or cracked through","Base washed out or severe lean"]
 };
 
 const KEY="pole-check-v1";
 let st=load();
-function blank(){return {pole:"",img:"",marks:{},na:{},open:"pco"}}
+function blank(){return {pole:"",img:"",marks:{},na:{},open:"anim"}}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.marks)return s}catch(e){}return blank()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
 function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+const lab=s=>s.cat.toLowerCase()===s.name.toLowerCase()?s.name:`${s.cat} › ${s.name}`;
 const isT1=(m,c)=>m.t1!==undefined?m.t1:(m.sev||c[2])==="crit";
 function t1Items(){
   const out=[];
   DATA.forEach(s=>{if(st.na[s.id])return;s.checks.forEach((c,ci)=>{const m=st.marks[s.id+"-"+ci];
-    if(m&&m.v==="fault"&&isT1(m,c))out.push({sec:s.name,check:c[0],sev:m.sev||c[2],note:m.note||""})})});
+    if(m&&m.v==="fault"&&isT1(m,c))out.push({sec:lab(s),check:c[0],sev:m.sev||c[2],note:m.note||""})})});
   const o={crit:0,major:1,minor:2};return out.sort((a,b)=>o[a.sev]-o[b.sev]);
 }
 function t1Report(items){
@@ -614,7 +709,8 @@ function render(){
         </div>`:""}
       </div>`}).join("");
     const figs=s.figs.length?`<div class="figlinks">Figures ${s.figs.map(f=>`<button type="button" data-fig="${f}">${esc(FIGMAP[f].name)}</button>`).join("")}</div>`:"";
-    return `<details class="sec" id="sec-${s.id}" ${st.open===s.id?"open":""}>
+    const head=(si===0||DATA[si-1].cat!==s.cat)?`<h3 class="cathead">${esc(s.cat)}</h3>`:"";
+    return head+`<details class="sec" id="sec-${s.id}" ${st.open===s.id?"open":""}>
       <summary><span class="num">${si+1}</span><span class="sname">${esc(s.name)}<em>${esc(s.sub)}</em></span><span class="scount" id="cnt-${s.id}"></span></summary>
       <div class="body ${st.na[s.id]?"disabled":""}">
         <div class="toprow"><label class="natoggle"><input type="checkbox" id="na-${s.id}" data-na="${s.id}" ${st.na[s.id]?"checked":""}> Not on this pole</label>${figs}</div>
@@ -654,10 +750,10 @@ function report(D,T){
   let out=`POLE: ${st.pole||"(no ID)"}\nIMAGES: ${st.img||"-"}\nDATE: ${d}\nCHECKED: ${D}/${T}\n`;
   const faults=[],skipped=[],missing=[];
   DATA.forEach(s=>{
-    if(st.na[s.id]){skipped.push(s.name);return}
+    if(st.na[s.id]){skipped.push(lab(s));return}
     s.checks.forEach((c,ci)=>{const m=st.marks[s.id+"-"+ci];
-      if(!m||!m.v)missing.push(`${s.name}: ${c[0]}`);
-      else if(m.v==="fault")faults.push({sev:m.sev||c[2],t:`${s.name} – ${c[0]}${m.note?` (${m.note})`:""}`});});
+      if(!m||!m.v)missing.push(`${lab(s)}: ${c[0]}`);
+      else if(m.v==="fault")faults.push({sev:m.sev||c[2],t:`${lab(s)} – ${c[0]}${m.note?` (${m.note})`:""}`});});
   });
   const order={crit:0,major:1,minor:2};faults.sort((a,b)=>order[a.sev]-order[b.sev]);
   const t1=t1Items();
@@ -702,13 +798,13 @@ document.getElementById("copyBtn").onclick=()=>{const pre=document.getElementByI
 
 /* ---------- Figures view ---------- */
 const secName=id=>DATA.find(d=>d.id===id)?.name||"";
-document.getElementById("figs").innerHTML=CATS.map(([cid,cname])=>`<section class="cat"><h2 id="cat-${cid}">${cname}</h2><div class="grid">${
+document.getElementById("figs").innerHTML=CATS.map(([cid,cname,csub])=>`<section class="cat"><h2 id="cat-${cid}">${cname}</h2>${csub?`<p class="catsub">${csub}</p>`:""}<div class="grid">${
   FIGS.filter(f=>f.cat===cid).map(f=>`<article class="fig" id="fig-${f.id}">
     ${svg(SVG[f.id],esc(f.name))}
     <h3>${esc(f.name)}</h3>
     <div><div class="lbl">Spot it</div><p>${esc(f.spot)}</p></div>
     <div><div class="lbl">Watch for</div><div class="watch">${f.watch.map(w=>`<span>${esc(w)}</span>`).join("")}</div></div>
-    <div class="t1fig"><div class="lbl">Tier 1 – report now if</div><ul>${T1F[f.id].map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
+    ${T1F[f.id]?"":"<!--"}<div class="t1fig"><div class="lbl">Tier 1 – report now if</div><ul>${(T1F[f.id]||[]).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>${T1F[f.id]?"":"-->"}
     <button type="button" class="btn sm" data-sec="${f.sec}">Check: ${esc(secName(f.sec))} →</button>
   </article>`).join("")}</div></section>`).join("");
 document.getElementById("catnav").innerHTML=CATS.map(([cid,cname])=>`<button type="button" data-cat="${cid}">${cname}</button>`).join("");
