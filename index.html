@@ -21,7 +21,7 @@
   --sky:#e3eaf0; --ink:#2b3238; --wire:#2b3238; --wood:#a77c4f; --porc:#8a4b2c; --poly:#8b949b;
   --metal:#a7b0b7; --tank:#93a3ab; --cu:#c27a3a; --al:#c3c9ce; --steel:#6c757c; --jacket:#2a2f33;
   --tube:#b98a4a; --yel:#e0b000; --conduit:#9aa4ab; --earth:#cdbd9f; --glass:#dfe8ee; --plate:#f4f6f7; --neu:#8d969d;
-  --leaf:#4f8a3e; --leaf2:#73a85a; --bark:#6b4a2e; --dead:#8a7d6c; --guard:#4c5c6b;
+  --leaf:#4f8a3e; --leaf2:#73a85a; --bark:#6b4a2e; --dead:#8a7d6c; --guard:#4c5c6b; --jacket2:#3d454b;
   /* thermal (ironbow) palette: same in both themes, like a real IR camera */
   --ir-bg:#160a2e; --ir-dim:#4a2a78; --ir-mid:#7a3378; --ir-mag:#c8336c; --ir-or:#ff8a1f; --ir-yel:#ffe76a; --ir-white:#ffffff; --ir-txt:#f4f0ff;
   --display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
@@ -35,7 +35,7 @@
   --sky:#1f2931; --ink:#0b0f13; --wire:#d3dae0; --wood:#8a6640; --porc:#a05a37; --poly:#76808a;
   --metal:#8f99a1; --tank:#6d7d86; --cu:#b86f30; --al:#aab2b8; --steel:#4f585f; --jacket:#59636a;
   --tube:#a77a3e; --yel:#e6bd1a; --conduit:#7e8990; --earth:#4a4031; --glass:#34414b; --plate:#c9d1d6; --neu:#b7c0c6;
-  --leaf:#3f7432; --leaf2:#5b8f47; --bark:#5a3e27; --dead:#7a6e60; --guard:#71849a;
+  --leaf:#3f7432; --leaf2:#5b8f47; --bark:#5a3e27; --dead:#7a6e60; --guard:#71849a; --jacket2:#6a747b;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#12171c; --panel:#1b2228; --fg:#e7ebee; --muted:#9aa5af; --line:#2c353d;
@@ -45,7 +45,7 @@
   --sky:#1f2931; --ink:#0b0f13; --wire:#d3dae0; --wood:#8a6640; --porc:#a05a37; --poly:#76808a;
   --metal:#8f99a1; --tank:#6d7d86; --cu:#b86f30; --al:#aab2b8; --steel:#4f585f; --jacket:#59636a;
   --tube:#a77a3e; --yel:#e6bd1a; --conduit:#7e8990; --earth:#4a4031; --glass:#34414b; --plate:#c9d1d6; --neu:#b7c0c6;
-  --leaf:#3f7432; --leaf2:#5b8f47; --bark:#5a3e27; --dead:#7a6e60; --guard:#71849a;
+  --leaf:#3f7432; --leaf2:#5b8f47; --bark:#5a3e27; --dead:#7a6e60; --guard:#71849a; --jacket2:#6a747b;
   color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--display);font-size:16px;line-height:1.4}
@@ -195,6 +195,7 @@ summary::-webkit-details-marker{display:none}
 .crackr{fill:none;stroke:var(--crit);stroke-width:1.6}
 .skyfill{fill:var(--sky)}
 .ghost{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 3}
+.jk1{fill:var(--jacket);stroke:var(--ink);stroke-width:.6} .jk2{fill:var(--jacket2);stroke:var(--ink);stroke-width:.6} .olin{fill:none;stroke:var(--ink);stroke-width:1} .ystripe{fill:none;stroke:var(--yel);stroke-width:1.6}
 .lbs{fill:var(--ink);font:600 5.5px var(--mono)}
 .cathead{margin:14px 0 0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:4px}
 .subhead{margin:18px 0 8px;font-size:15px;font-weight:600;color:var(--fg)}
@@ -306,6 +307,9 @@ const xh=(cx,cy)=>`<path d="M${cx-10} ${cy}h6M${cx+4} ${cy}h6M${cx} ${cy-10}v6M$
 const irFrame=(id,body)=>irDefs(id)+R(0,0,200,150,"irbg")+body+`<rect x="186" y="16" width="7" height="110" fill="url(#sc-${id})"/>`+IT(189.5,11,"95°","middle")+IT(189.5,138,"20°","middle");
 const crown=(cx,cy,s)=>C(cx,cy,14*s,"leaf")+C(cx-12*s,cy+6*s,11*s,"leaf2")+C(cx+12*s,cy+5*s,11*s,"leaf2")+C(cx-5*s,cy-9*s,10*s,"leaf")+C(cx+7*s,cy-8*s,10*s,"leaf2");
 const tx=t=>20+t*160/30;
+const str2=(x0,x1,y0,y1)=>{let o="";for(let x=x0;x<x1-4;x+=8)o+=`<line x1="${x}" y1="${y1}" x2="${Math.min(x+8,x1)}" y2="${y0}" class="strand"/>`;return o};
+const twistBands=(y0,y1,ug)=>{let o="";const h=y1-y0;for(let x=-24;x<124;x+=36){o+=P(`M${x} ${y0}h12l8 ${h}h-12z`,"jk1")+P(`M${x+12} ${y0}h12l8 ${h}h-12z`,"jk2");
+  if(ug)o+=P(`M${x+24} ${y0}h12l8 ${h}h-12z`,"jk1")+P(`M${x+30} ${y0}l8 ${h}`,"ystripe")}return o};
 /* 3-phase porcelain cutouts on a cross arm */
 const miniCO=(x,open)=>R(x-5,50,10,6,"metal")+R(x-4,56,8,44,"porc",2)+vS(x,62,4,11,7,2,"porc")
   +R(x,54,12,3,"metal")+R(x+8,51,9,8,"metal",2)+R(x,99,12,3,"metal")
@@ -366,18 +370,18 @@ const SVG={
  "ug-pri":`<rect x="0" y="128" width="200" height="22" class="earth"/><line x1="0" y1="128" x2="200" y2="128" class="gnd"/>`+POLE(84,18,0,128)
    +R(102,58,10,70,"conduit",1)+R(103,30,8,28,"poly",2)+vS(107,34,4,6,7,2,"poly")+P("M107 30V18Q110 6 150 6H196")+P("M107 128V138Q107 144 120 144H196","ugc")
    +L(115,40,135,40,"termination")+L(112,95,135,95,"U-guard")+T(150,140,"cable"),
- "open":POLE()+R(24,24,6,112,"metal")+R(44,24,3,112,"metal")
-   +[40,80,120].map(cy=>spool(32,cy)+P(`M36 ${cy}Q120 ${cy+12} 196 ${cy+4}`,"wthick")).join("")
-   +T(196,32,"hot","end")+T(196,72,"neutral","end")+T(196,112,"hot","end"),
- "triplex":POLE()+R(24,66,14,8,"metal")+P("M38 70H196","neu")+P(twist(0),"jkt")+P(twist(1),"jkt")
-   +L(100,60,100,30,"insulated hots")+L(150,72,140,112,"bare neutral","end")+L(31,74,40,130,"dead-end clamp"),
- "ug-sec":`<rect x="0" y="118" width="200" height="32" class="earth"/><line x1="0" y1="118" x2="200" y2="118" class="gnd"/>`+POLE(40,16,0,118)
-   +R(56,24,8,4,"metal")+R(56,46,8,4,"metal")+R(64,10,40,46,"tank",6)+R(61,6,46,7,"tank",3)
-   +[24,34,44].map(y=>R(104,y-3,7,6,"porc",1)).join("")
-   +R(58,84,8,34,"conduit",1)+R(55,78,14,7,"conduit",3)
-   +[24,34,44].map((y,i)=>P(`M111 ${y}C${132-i*2} ${y} ${128-i*2} ${96+i*2} 100 ${96+i*2}C82 ${96+i*2} 70 92 ${60+i*3} 85`,"jkt3")).join("")
-   +P("M62 118V132Q62 138 74 138H196","ugc")
-   +L(128,82,145,70,"drip loop")+L(69,80,136,108,"weatherhead")+T(72,112,"riser"),
+ "open":R(4,26,3,88,"metal")+[[40,"hot"],[70,"neutral"],[100,"hot"]].map(([y,t])=>spool(8,y)+R(34,y-6,70,12,"al",2)+str2(34,104,y-6,y+6)
+     +C(165,y,4.5,"al")+ring(165,y,6,9,4.5,"al")+T(148,y+3,t,"end")).join("")
+   +T(8,140,"separate wires, spaced apart"),
+ "triplex":`<defs><clipPath id="tw-clip"><rect x="8" y="56" width="112" height="28" rx="4"/></clipPath></defs>`
+   +`<g clip-path="url(#tw-clip)">`+R(8,56,112,28,"al")+str2(8,120,56,84)+twistBands(56,84,false)+`</g>`+R(8,56,112,28,"olin",4)
+   +C(150,63,10,"jk1")+C(150,63,5,"al")+C(170,63,10,"jk2")+C(170,63,5,"al")+C(160,80,3.5,"al")+ring(160,80,6,7,3.5,"al")
+   +L(150,53,140,32,"insulated hots","end")+L(156,88,140,118,"bare neutral","end")+L(64,84,64,108,"lay"),
+ "ug-sec":`<defs><clipPath id="ug-clip"><rect x="8" y="40" width="112" height="24" rx="4"/></clipPath></defs>`
+   +`<g clip-path="url(#ug-clip)">`+twistBands(40,64,true)+`</g>`+R(8,40,112,24,"olin",4)
+   +C(150,46,10,"jk1")+C(150,46,5,"al")+C(170,46,10,"jk2")+C(170,46,5,"al")+C(160,63,10,"jk1")+C(160,63,5,"al")+C(160,63,8,"ystripe")
+   +L(150,36,140,20,"insulated hots","end")+L(152,68,136,88,"insulated neutral","end")
+   +`<rect x="0" y="112" width="200" height="38" class="earth"/><line x1="0" y1="112" x2="200" y2="112" class="gnd"/>`+P("M8 130H192","ugc")+T(10,146,"buried or in conduit"),
  "armless":POLE(92,16,30,120)+R(96,8,8,22,"poly",2)+vS(100,12,3,6,8,2,"poly")+C(100,5,4,"al")
    +R(84,52,8,8,"metal")+R(56,53,28,6,"poly",2)+hS(62,56,4,6,2.5,8,"poly")+C(52,56,4,"al")
    +R(108,82,8,8,"metal")+R(116,83,28,6,"poly",2)+hS(122,86,4,6,2.5,8,"poly")+C(148,86,4,"al")
@@ -498,9 +502,9 @@ const FIGS=[
  {id:"cu",cat:"cond",sub:"Primary",name:"Copper Primary Conductor",sec:"cond",spot:"Bare stranded or solid wire, copper-brown when new, green or dark with age. Common on older lines.",watch:["Broken strands","Burnt sections","Loose splices","Low sag"]},
  {id:"spacer",cat:"cond",sub:"Primary",name:"Spacer Cable Primary Conductor",sec:"cond",spot:"Bare messenger on top, three covered phase wires held by plastic diamond spacers along the span.",watch:["Spacer slipped / broken","Jacket damage or tracking","Tree contact","Messenger damage"]},
  {id:"ug-pri",cat:"cond",sub:"Primary",name:"Underground Primary Conductor",sec:"cond",spot:"Cable comes up the pole in a U-guard or conduit to a termination with sheds, then on to the arrester and cutout.",watch:["Cracked termination","Tracking / burns","U-guard damaged","Missing ground"]},
- {id:"open",cat:"cond",sub:"Secondary",name:"Open Wire Secondary Conductor",sec:"sec",spot:"Separate wires spaced on a spool rack (two hots and a neutral), running below the primary.",watch:["Wires touching","Broken spool","Low sag","Tree contact"]},
- {id:"triplex",cat:"cond",sub:"Secondary",name:"Twist Secondary Conductor",sec:"sec",spot:"Two black insulated wires twisted around a bare neutral messenger. Quadplex has three insulated wires.",watch:["Insulation worn / cut","Neutral broken","Dead-end slipping","Tree rubbing"]},
- {id:"ug-sec",cat:"cond",sub:"Secondary",name:"Underground Secondary Conductor",sec:"sec",spot:"Black cables leave the transformer, make a drip loop, and enter a weatherhead on a conduit running down the pole.",watch:["Damaged weatherhead","Cracked insulation at loop","Conduit broken","Burnt connector"]},
+ {id:"open",cat:"cond",sub:"Secondary",name:"Open Wire Secondary Conductor",sec:"sec",spot:"Three separate wires – two hots and a neutral – spaced apart on a spool rack below the primary. Wires are bare or weatherproof-covered. Older construction.",watch:["Wires touching or slapping","Weatherproof cover peeling","Broken spool","Low sag","Tree contact"]},
+ {id:"triplex",cat:"cond",sub:"Secondary",name:"Twist Secondary Conductor",sec:"sec",spot:"Two black insulated hots twisted around a bare aluminum neutral that carries the weight. Quadplex adds a third insulated wire. The most common overhead secondary.",watch:["Insulation worn or cut","Bare neutral broken or birdcaged","Cable untwisting at dead-end","Tree rubbing"]},
+ {id:"ug-sec",cat:"cond",sub:"Secondary",name:"Underground Secondary Conductor",sec:"sec",spot:"Fully insulated cables – the neutral is insulated too, usually marked with a stripe or ridges. They leave the transformer, loop into a weatherhead and run down the pole in a riser conduit into the ground.",watch:["Insulation cracked or sun-damaged","Riser conduit broken","Weatherhead missing","Burnt connector at transformer"]},
  {id:"armless",cat:"frm",name:"Armless",sec:"arm",spot:"No cross arm. Post insulators bolt to the pole on standoff brackets, staggered on alternate sides.",watch:["Bracket bent / loose","Post cracked","Wire off clamp","Pole top damage"]},
  {id:"arm",cat:"frm",name:"Cross arm",sec:"arm",spot:"Horizontal wood or fiberglass arm bolted near the pole top, carrying pin insulators. Often a pole-top pin above.",watch:["Split or rotten arm","Burn marks","Arm not level","Woodpecker holes"]},
  {id:"brace",cat:"frm",name:"Cross arm brace",sec:"arm",spot:"Two diagonal steel or wood straps from the underside of the arm down to the pole, forming a V.",watch:["Broken / missing brace","Loose bolts","Bent brace","Arm sagging one side"]},
