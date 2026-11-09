@@ -192,6 +192,9 @@ summary::-webkit-details-marker{display:none}
 .rot{fill:var(--dead);stroke:var(--ink);stroke-width:.8}
 .brand{fill:none;stroke:var(--ink);stroke-width:.8}
 .tubes{fill:none;stroke:var(--tube);stroke-width:5;stroke-linecap:round} .tubeso{fill:none;stroke:var(--ink);stroke-width:7;stroke-linecap:round}
+.crackr{fill:none;stroke:var(--crit);stroke-width:1.6}
+.skyfill{fill:var(--sky)}
+.ghost{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 3}
 .lbs{fill:var(--ink);font:600 5.5px var(--mono)}
 .cathead{margin:14px 0 0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:4px}
 .catsub{margin:-4px 0 10px;font-size:13px;color:var(--muted)}
@@ -442,6 +445,29 @@ const SVG={
  "co-3ph-closed":dbl3(-1)+L(144,55,162,68,"contact")+L(141,80,162,88,"closed"),
  "co-3ph-open":dbl3(1)+C(74,122,20,"hit")+L(93,128,150,118,"door open")+T(153,129,"no contact")
    +L(144,55,162,68,"contact")+L(141,80,162,88,"closed"),
+ "pole-lean":`<rect x="0" y="128" width="200" height="22" class="earth"/><line x1="0" y1="128" x2="200" y2="128" class="gnd"/>`
+   +`<line x1="100" y1="128" x2="100" y2="4" class="ld"/>`+`<g transform="rotate(12 100 128)">`+R(92,4,16,124,"wood")+R(68,18,64,8,"wood",1)+`</g>`
+   +P("M86 128q6 -6 12 -2M110 128q8 -7 16 -1","crack")+P("M100 88A40 40 0 0 1 108.3 88.9","fall")+T(112,96,"12°")
+   +L(100,40,80,30,"plumb","end")+L(122,50,150,60,"leaning"),
+ "co-crack":cutout("porc",false,false)+P("M58 64L64 68L61 74L68 79L66 85L74 88","crackr")+C(66,76,16,"hit")
+   +L(58,96,55,110,"crack","end")+T(196,132,"to transformer","end"),
+ "neut-broken":POLE(8,14)+POLE(178,14)+P("M22 16Q100 24 178 16","wthick")+P("M22 28Q100 36 178 28","wthick")
+   +R(22,68,6,4,"metal")+R(172,68,6,4,"metal")
+   +P("M28 70Q60 78 84 86Q88 100 82 118","wthick")+P("M172 70Q140 78 116 86Q110 104 118 122","wthick")
+   +C(100,100,24,"hit")+T(100,10,"primary","middle")+T(100,142,"neutral broken – floating","middle"),
+ "ir-primary":irFrame("ir-primary",[24,64,104].map(y=>P(`M52 ${y+16}L68 ${y+16}L64 ${y+3}L56 ${y+3}Z`,"irc")+P(`M0 ${y}H182`,"irw")+R(124,y-3,12,9,"irc",2)+P(`M130 ${y+6}Q134 ${y+20} 150 ${y+18}`,"irw")).join("")
+   +hot("ir-primary",130,24,6)+hot("ir-primary",130,104,6)+hot("ir-primary",130,64,24)+xh(130,64)
+   +IT(138,48,"Sp1 104°C")+IT(6,136,"ΔT 72°C vs. other phases")+IT(6,146,"primary jumper clamp")),
+ "float-phase":R(0,110,200,12,"wood")+R(58,96,4,14,"metal")
+   +P("M40 102L80 102L74 92L46 92Z","porc")+P("M44 92L76 92L70 80L50 80Z","porc")+P("M48 80L72 80L66 66L54 66Z","porc")+R(52,57,16,9,"porc",2)
+   +P("M0 57H120","ghost")+P("M54 56l-4 -7M66 56l5 -6","tie")
+   +P("M0 70Q30 72 40 86Q46 98 60 104Q90 110 130 104Q170 96 200 92","wthick")
+   +L(100,57,110,30,"normal position")+L(70,49,130,46,"broken tie")+L(84,107,100,135,"floating phase"),
+ "ins-broken":R(0,110,200,12,"wood")+R(98,96,4,14,"metal")
+   +P("M80 102L120 102L114 92L86 92Z","porc")+P("M84 92L116 92L110 80L90 80Z","porc")+P("M88 80L112 80L106 66L94 66Z","porc")+R(92,57,16,9,"porc",2)
+   +P("M106 103L121 103L115 89L109 94Z","skyfill")+P("M90 70L94 78L91 86L96 94","crackr")
+   +P("M130 110l5 -4l4 4Z","porc")+P("M142 110l3 -3l5 3Z","porc")+P("M0 60H200","wthick")+P("M94 56L98 64M100 56L104 64M106 56L110 64","tie")
+   +L(90,72,60,50,"crack","end")+L(117,96,140,70,"chipped")+L(140,108,150,135,"pieces"),
  "pole-tag":R(80,0,40,150,"wood")+R(84,40,32,14,"plate",1)+T(100,49,"P-10458","middle").replace('class="lb"','class="lbs"')
    +R(87,82,26,22,"brand")+T(100,91,"SP 45-3","middle").replace('class="lb"','class="lbs"')+T(100,100,"2004","middle").replace('class="lb"','class="lbs"')
    +L(112,47,135,47,"pole ID tag")+L(113,93,135,93,"birthmark")
@@ -497,6 +523,12 @@ const FIGS=[
  {id:"pole-base",cat:"pole",name:"Ground line",sec:"poles",spot:"Where the pole meets the ground. Look for rot, shell loss, fire damage and erosion around the base.",watch:["Ground-line decay","Erosion or washout","Fire damage","Vehicle damage"]},
  {id:"co-3ph-closed",cat:"prot",name:"3-phase porcelain cutouts – closed",sec:"co",spot:"Three porcelain cutouts hung under the cross arm, one per phase. Each fuse door runs up beside its cutout and latches into the top contact, so all three phases have contact.",watch:["Door not fully seated","Cracked porcelain on any phase","Burnt top contact","Bracket loose"]},
  {id:"co-3ph-open",cat:"prot",name:"3-phase porcelain cutouts – one open",sec:"co",spot:"Same setup, but one fuse door has dropped and hangs down from the hinge. That phase has no contact (blown fuse or opened). Compare all three doors side by side.",watch:["Door hanging from hinge","Fuse barrel missing","Other phases still closed (single-phasing)"]},
+ {id:"pole-lean",cat:"pole",name:"Leaning pole",sec:"poles",spot:"Pole tilted away from vertical. Compare it with a plumb reference such as a building edge or a straight pole nearby, and check for heaved soil or cracks at the base.",watch:["Noticeable lean","Soil heaved at base","Wires pulled tight or slack"]},
+ {id:"co-crack",cat:"prot",name:"Cracked transformer cutout",sec:"co",spot:"Porcelain cutout feeding a transformer, with a crack through the body. Cracks show as thin dark lines, often near the mounting bracket or between sheds.",watch:["Hairline crack in porcelain","Chipped sheds","Tracking along the crack"]},
+ {id:"neut-broken",cat:"cond",name:"Broken / floating neutral",sec:"cond",spot:"Neutral broken in the span or disconnected at the pole, with the ends hanging. Customers on a floating neutral can get high or low voltage.",watch:["Neutral ends hanging","Neutral off its bracket","Burnt neutral connector"]},
+ {id:"float-phase",cat:"cond",name:"Floating phase",sec:"cond",spot:"A primary phase that has come off its insulator and is no longer tied, sitting loose or lying on the arm. The tie wire is usually broken.",watch:["Conductor out of the groove","Broken tie wire","Conductor resting on arm"]},
+ {id:"ir-primary",cat:"ir",name:"Hot connection – primary",sec:"ir",spot:"Hotspot at a primary connection such as a jumper clamp or hot line clamp. Compare it with the same clamp on the other phases.",watch:["Clamp hotter than other phases","Hot jumper","Hot dead-end connection"]},
+ {id:"ins-broken",cat:"ins",name:"Broken insulator",sec:"ins",spot:"Pin or post insulator with pieces missing or cracked through, often with fragments lying on the arm below.",watch:["Chipped or missing pieces","Crack through insulator","Fragments on arm"]},
  {id:"pole-tag",cat:"pole",name:"Pole tag & birthmark",sec:"poles",spot:"The pole ID tag, and the birthmark (brand) with height, class and year. Use these to confirm which pole you're reporting.",watch:["Tag missing or unreadable","Tag doesn't match records"]}
 ];
 
@@ -509,15 +541,17 @@ const DATA=[
   ["Perch guard or pin cover missing","Cross arm top and pole-top pin","minor"],
   ["Nest on arm or equipment","Arm, transformer, cutouts","major"],
   ["Animal or carcass on equipment","Signs of contact or electrocution","crit"]]},
- {id:"cond",cat:"Conductors",name:"Primary conductors",sub:"Aluminum, copper, spacer or underground",figs:["al","cu","spacer","ug-pri"],checks:[
+ {id:"cond",cat:"Conductors",name:"Primary conductors",sub:"Aluminum, copper, spacer or underground",figs:["al","cu","spacer","ug-pri","neut-broken","float-phase"],checks:[
   ["Broken strands or birdcaging","Near clamps, ties and splices","major"],
   ["Burn or arc marks on conductor","Pitting, discoloured spots","major"],
   ["Uneven sag / low clearance","Compare phases across the span","major"],
   ["Spacer cable: spacer slipped or broken","Spacers evenly placed and intact","major"],
   ["Covered conductor jacket damaged","Cuts, tracking, tree rub","major"],
   ["Riser termination cracked or tracking","Sheds and cable entry","major"],
-  ["U-guard / conduit damaged","Full length down the pole","minor"]]},
- {id:"sec",cat:"Conductors",name:"Secondary conductors",sub:"Open wire, triplex or underground",figs:["open","triplex","ug-sec"],checks:[
+  ["U-guard / conduit damaged","Full length down the pole","minor"],
+  ["Floating phase – conductor off insulator, not tied","Each phase at each insulator","crit"],
+  ["Primary neutral broken or floating","Neutral position below the primary","crit"]]},
+ {id:"sec",cat:"Conductors",name:"Secondary conductors",sub:"Open wire, triplex or underground",figs:["open","triplex","ug-sec","neut-broken"],checks:[
   ["Conductor loose or disconnected","Any lead hanging or pulled out","crit"],
   ["Neutral broken or damaged","Bare neutral intact end to end","crit"],
   ["Connector burnt, melted or discoloured","Heat marks at clamps and taps","major"],
@@ -547,15 +581,16 @@ const DATA=[
   ["Equipment hanging by one bolt","Brackets, arms, hangers","crit"],
   ["Pole ground wire cut, loose or missing","Top to bottom of pole","major"],
   ["Ground molding missing or damaged","Lower part of pole","minor"]]},
- {id:"ins",cat:"Insulators",name:"Insulators",sub:"Dead-end, pin/post or spool",figs:["deadend","pinpost","spool"],checks:[
+ {id:"ins",cat:"Insulators",name:"Insulators",sub:"Dead-end, pin/post or spool",figs:["deadend","pinpost","spool","ins-broken","float-phase"],checks:[
   ["Conductor off the insulator","Wire resting on arm or hanging","crit"],
   ["Insulator cracked or broken","Every phase, every insulator","major"],
   ["Flashover or tracking marks","Glaze burns or dark streaks","major"],
   ["Tie wire broken, loose or unwrapped","Conductor held firmly in groove","major"],
   ["Skirts chipped","Small chips on sheds","minor"],
   ["Pin bent or insulator leaning","Compare to neighbours","minor"],
-  ["Polymer eroded, chalky or split","Sheds and end fittings","minor"]]},
- {id:"poles",cat:"Poles",name:"Poles",sub:"Top, body, ground line and ID",figs:["pole-top","pole-base","pole-tag"],checks:[
+  ["Polymer eroded, chalky or split","Sheds and end fittings","minor"],
+  ["Insulator broken – pieces missing or fragments on arm","Arm surface below each insulator","major"]]},
+ {id:"poles",cat:"Poles",name:"Poles",sub:"Top, body, ground line and ID",figs:["pole-top","pole-base","pole-tag","pole-lean"],checks:[
   ["Pole broken or cracked through","Full pole, top to ground","crit"],
   ["Pole leaning badly","Compare to vertical and to other poles","major"],
   ["Top split, burnt or cap missing","Pole top above hardware","major"],
@@ -564,7 +599,7 @@ const DATA=[
   ["Foreign object on lines (balloon, kite, debris)","All conductors in frame","major"],
   ["Fire, smoke or active arcing visible","Anywhere on the structure or below it","crit"],
   ["Pole tag missing or doesn't match records","Confirm pole ID","minor"]]},
- {id:"pco",cat:"Protective Devices",name:"Silver-top PCO",sub:"Porcelain cutout with silver top cap",figs:["co-porc","co-3ph-closed","co-3ph-open"],checks:[
+ {id:"pco",cat:"Protective Devices",name:"Silver-top PCO",sub:"Porcelain cutout with silver top cap",figs:["co-porc","co-3ph-closed","co-3ph-open","co-crack"],checks:[
   ["Porcelain body cracked or chipped","Zoom on the full length of the porcelain","major"],
   ["Fuse door dropped / hanging open","Door should sit closed and latched at the top","major"],
   ["Silver top cap corroded, split or missing","Check the cap and vent area","minor"],
@@ -578,7 +613,7 @@ const DATA=[
   ["Tracking or burn marks on housing","Dark streaks along the sheds","major"],
   ["Line lead loose or burnt","Top terminal and jumper","major"],
   ["Bracket loose or arrester leaning","Compare angle to other phases","minor"]]},
- {id:"co",cat:"Protective Devices",name:"Cutouts",sub:"Porcelain or polymer, single or 3-phase",figs:["co-porc","co-poly","co-3ph-closed","co-3ph-open"],checks:[
+ {id:"co",cat:"Protective Devices",name:"Cutouts",sub:"Porcelain or polymer, single or 3-phase",figs:["co-porc","co-poly","co-3ph-closed","co-3ph-open","co-crack"],checks:[
   ["Fuse door open / dropped (blown fuse)","Door swung down out of the top contact","major"],
   ["Fuse barrel missing","Empty cutout body","major"],
   ["Door misaligned or partly open","Door not fully seated","major"],
@@ -626,7 +661,7 @@ const DATA=[
   ["Dead or leaning tree that could fall into lines","Tree height vs. distance to lines","major"],
   ["Tree contact on secondary or service drop","Secondary and service wires","minor"],
   ["Limbs overhanging the lines","Branches above the conductors","minor"]]},
- {id:"ir",cat:"Thermal (IR)",name:"Thermal (IR)",sub:"Compare each part to the same part on other phases",figs:["ir-conn","ir-cutout","ir-bushing","ir-scale"],checks:[
+ {id:"ir",cat:"Thermal (IR)",name:"Thermal (IR)",sub:"Compare each part to the same part on other phases",figs:["ir-conn","ir-cutout","ir-bushing","ir-scale","ir-primary"],checks:[
   ["Connector, clamp or splice hotter than other phases","Note spot temperature and ΔT","major"],
   ["Cutout contact or hinge hot","Top contact and hinge, each phase","major"],
   ["Transformer bushing terminal hot","Primary and secondary terminals","major"],
@@ -678,6 +713,12 @@ const T1F={
  "hw-ground":["Ground cut at equipment","Broken ground with damaged neutral"],
  "co-3ph-closed":["Door half-open, arcing at contact","Porcelain shattered with lead hanging"],
  "co-3ph-open":["Door open with burn marks or smoke","Lead burnt off or hanging low"],
+ "pole-lean":["Severe or increasing lean","Leaning toward road, building or wires"],
+ "co-crack":["Crack through the body, cutout could break","Crack with burn marks or arcing"],
+ "neut-broken":["Neutral broken or floating","Neutral end hanging near the ground"],
+ "float-phase":["Phase off the insulator","Phase touching arm, pole or other wires"],
+ "ir-primary":["Over 15 °C hotter than other phases","Over 40 °C above ambient"],
+ "ins-broken":["Insulator broken, wire could drop","Burn marks or arcing at the break"],
  "pole-top":["Pole top burnt or broken off","Top split letting hardware pull out"],
  "pole-base":["Pole broken or cracked through","Base washed out or severe lean"]
 };
