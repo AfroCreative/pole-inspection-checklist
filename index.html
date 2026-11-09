@@ -197,6 +197,9 @@ summary::-webkit-details-marker{display:none}
 .ghost{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 3}
 .lbs{fill:var(--ink);font:600 5.5px var(--mono)}
 .cathead{margin:14px 0 0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:4px}
+.subhead{margin:18px 0 8px;font-size:15px;font-weight:600;color:var(--fg)}
+.typesel{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+.typesel select{width:auto;padding:4px 8px;font-size:14px}
 .catsub{margin:-4px 0 10px;font-size:13px;color:var(--muted)}
 @media (max-width:480px){.fault-box{grid-template-columns:1fr}.check{grid-template-columns:1fr}.seg{justify-self:start}}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
@@ -491,13 +494,13 @@ const FIGS=[
  {id:"deadend",cat:"ins",name:"Dead-end insulator",sec:"ins",spot:"Insulator in line with the wire where the line ends or turns. The wire is held in a clamp and a jumper loops around it.",watch:["Cracked / eroded sheds","Clamp slipping","Broken strands at clamp","Burnt jumper"]},
  {id:"pinpost",cat:"ins",name:"Pin / post insulator",sec:"ins",spot:"Pin: bell-shaped insulator on a steel pin, wire tied on top. Post: solid insulator bolted to a base, wire in a top clamp.",watch:["Wire off insulator","Broken tie wire","Cracked or chipped","Leaning pin"]},
  {id:"spool",cat:"ins",name:"Spool insulator",sec:"ins",spot:"Small round spools on a secondary rack bolted to the pole. Carries low-voltage secondary wires.",watch:["Broken spool","Wire off spool","Rack loose / bent","Broken ties"]},
- {id:"al",cat:"cond",name:"Aluminum (AAC / ACSR)",sec:"cond",spot:"Bare silver-gray stranded wire. ACSR has a steel core that only shows at a break.",watch:["Broken strands / birdcaging","Burn or arc marks","Uneven sag","Corroded connectors"]},
- {id:"cu",cat:"cond",name:"Copper",sec:"cond",spot:"Bare stranded or solid wire, copper-brown when new, green or dark with age. Common on older lines.",watch:["Broken strands","Burnt sections","Loose splices","Low sag"]},
- {id:"spacer",cat:"cond",name:"Spacer cable",sec:"cond",spot:"Bare messenger on top, three covered phase wires held by plastic diamond spacers along the span.",watch:["Spacer slipped / broken","Jacket damage or tracking","Tree contact","Messenger damage"]},
- {id:"ug-pri",cat:"cond",name:"Underground riser – primary",sec:"cond",spot:"Cable comes up the pole in a U-guard or conduit to a termination with sheds, then on to the arrester and cutout.",watch:["Cracked termination","Tracking / burns","U-guard damaged","Missing ground"]},
- {id:"open",cat:"cond",name:"Open wire secondary",sec:"sec",spot:"Separate wires spaced on a spool rack (two hots and a neutral), running below the primary.",watch:["Wires touching","Broken spool","Low sag","Tree contact"]},
- {id:"triplex",cat:"cond",name:"Twisted secondary (triplex)",sec:"sec",spot:"Two black insulated wires twisted around a bare neutral messenger. Quadplex has three insulated wires.",watch:["Insulation worn / cut","Neutral broken","Dead-end slipping","Tree rubbing"]},
- {id:"ug-sec",cat:"cond",name:"Underground secondary",sec:"sec",spot:"Black cables leave the transformer, make a drip loop, and enter a weatherhead on a conduit running down the pole.",watch:["Damaged weatherhead","Cracked insulation at loop","Conduit broken","Burnt connector"]},
+ {id:"al",cat:"cond",sub:"Primary",name:"Aluminum Primary Conductor",sec:"cond",spot:"Bare silver-gray stranded wire. ACSR has a steel core that only shows at a break.",watch:["Broken strands / birdcaging","Burn or arc marks","Uneven sag","Corroded connectors"]},
+ {id:"cu",cat:"cond",sub:"Primary",name:"Copper Primary Conductor",sec:"cond",spot:"Bare stranded or solid wire, copper-brown when new, green or dark with age. Common on older lines.",watch:["Broken strands","Burnt sections","Loose splices","Low sag"]},
+ {id:"spacer",cat:"cond",sub:"Primary",name:"Spacer Cable Primary Conductor",sec:"cond",spot:"Bare messenger on top, three covered phase wires held by plastic diamond spacers along the span.",watch:["Spacer slipped / broken","Jacket damage or tracking","Tree contact","Messenger damage"]},
+ {id:"ug-pri",cat:"cond",sub:"Primary",name:"Underground Primary Conductor",sec:"cond",spot:"Cable comes up the pole in a U-guard or conduit to a termination with sheds, then on to the arrester and cutout.",watch:["Cracked termination","Tracking / burns","U-guard damaged","Missing ground"]},
+ {id:"open",cat:"cond",sub:"Secondary",name:"Open Wire Secondary Conductor",sec:"sec",spot:"Separate wires spaced on a spool rack (two hots and a neutral), running below the primary.",watch:["Wires touching","Broken spool","Low sag","Tree contact"]},
+ {id:"triplex",cat:"cond",sub:"Secondary",name:"Twist Secondary Conductor",sec:"sec",spot:"Two black insulated wires twisted around a bare neutral messenger. Quadplex has three insulated wires.",watch:["Insulation worn / cut","Neutral broken","Dead-end slipping","Tree rubbing"]},
+ {id:"ug-sec",cat:"cond",sub:"Secondary",name:"Underground Secondary Conductor",sec:"sec",spot:"Black cables leave the transformer, make a drip loop, and enter a weatherhead on a conduit running down the pole.",watch:["Damaged weatherhead","Cracked insulation at loop","Conduit broken","Burnt connector"]},
  {id:"armless",cat:"frm",name:"Armless",sec:"arm",spot:"No cross arm. Post insulators bolt to the pole on standoff brackets, staggered on alternate sides.",watch:["Bracket bent / loose","Post cracked","Wire off clamp","Pole top damage"]},
  {id:"arm",cat:"frm",name:"Cross arm",sec:"arm",spot:"Horizontal wood or fiberglass arm bolted near the pole top, carrying pin insulators. Often a pole-top pin above.",watch:["Split or rotten arm","Burn marks","Arm not level","Woodpecker holes"]},
  {id:"brace",cat:"frm",name:"Cross arm brace",sec:"arm",spot:"Two diagonal steel or wood straps from the underside of the arm down to the pole, forming a V.",watch:["Broken / missing brace","Loose bolts","Bent brace","Arm sagging one side"]},
@@ -525,8 +528,8 @@ const FIGS=[
  {id:"co-3ph-open",cat:"prot",name:"3-phase porcelain cutouts – one open",sec:"co",spot:"Same setup, but one fuse door has dropped and hangs down from the hinge. That phase has no contact (blown fuse or opened). Compare all three doors side by side.",watch:["Door hanging from hinge","Fuse barrel missing","Other phases still closed (single-phasing)"]},
  {id:"pole-lean",cat:"pole",name:"Leaning pole",sec:"poles",spot:"Pole tilted away from vertical. Compare it with a plumb reference such as a building edge or a straight pole nearby, and check for heaved soil or cracks at the base.",watch:["Noticeable lean","Soil heaved at base","Wires pulled tight or slack"]},
  {id:"co-crack",cat:"prot",name:"Cracked transformer cutout",sec:"co",spot:"Porcelain cutout feeding a transformer, with a crack through the body. Cracks show as thin dark lines, often near the mounting bracket or between sheds.",watch:["Hairline crack in porcelain","Chipped sheds","Tracking along the crack"]},
- {id:"neut-broken",cat:"cond",name:"Broken / floating neutral",sec:"cond",spot:"Neutral broken in the span or disconnected at the pole, with the ends hanging. Customers on a floating neutral can get high or low voltage.",watch:["Neutral ends hanging","Neutral off its bracket","Burnt neutral connector"]},
- {id:"float-phase",cat:"cond",name:"Floating phase",sec:"cond",spot:"A primary phase that has come off its insulator and is no longer tied, sitting loose or lying on the arm. The tie wire is usually broken.",watch:["Conductor out of the groove","Broken tie wire","Conductor resting on arm"]},
+ {id:"neut-broken",cat:"cond",sub:"Conductor faults",name:"Broken / floating neutral",sec:"cond",spot:"Neutral broken in the span or disconnected at the pole, with the ends hanging. Customers on a floating neutral can get high or low voltage.",watch:["Neutral ends hanging","Neutral off its bracket","Burnt neutral connector"]},
+ {id:"float-phase",cat:"cond",sub:"Conductor faults",name:"Floating phase",sec:"cond",spot:"A primary phase that has come off its insulator and is no longer tied, sitting loose or lying on the arm. The tie wire is usually broken.",watch:["Conductor out of the groove","Broken tie wire","Conductor resting on arm"]},
  {id:"ir-primary",cat:"ir",name:"Hot connection – primary",sec:"ir",spot:"Hotspot at a primary connection such as a jumper clamp or hot line clamp. Compare it with the same clamp on the other phases.",watch:["Clamp hotter than other phases","Hot jumper","Hot dead-end connection"]},
  {id:"ins-broken",cat:"ins",name:"Broken insulator",sec:"ins",spot:"Pin or post insulator with pieces missing or cracked through, often with fragments lying on the arm below.",watch:["Chipped or missing pieces","Crack through insulator","Fragments on arm"]},
  {id:"pole-tag",cat:"pole",name:"Pole tag & birthmark",sec:"poles",spot:"The pole ID tag, and the birthmark (brand) with height, class and year. Use these to confirm which pole you're reporting.",watch:["Tag missing or unreadable","Tag doesn't match records"]}
@@ -541,7 +544,7 @@ const DATA=[
   ["Perch guard or pin cover missing","Cross arm top and pole-top pin","minor"],
   ["Nest on arm or equipment","Arm, transformer, cutouts","major"],
   ["Animal or carcass on equipment","Signs of contact or electrocution","crit"]]},
- {id:"cond",cat:"Conductors",name:"Primary conductors",sub:"Aluminum, copper, spacer or underground",figs:["al","cu","spacer","ug-pri","neut-broken","float-phase"],checks:[
+ {id:"cond",cat:"Conductors",name:"Primary",sub:"Aluminum, copper, spacer cable or underground",types:["Aluminum Primary Conductor","Copper Primary Conductor","Spacer Cable Primary Conductor","Underground Primary Conductor"],figs:["al","cu","spacer","ug-pri","neut-broken","float-phase"],checks:[
   ["Broken strands or birdcaging","Near clamps, ties and splices","major"],
   ["Burn or arc marks on conductor","Pitting, discoloured spots","major"],
   ["Uneven sag / low clearance","Compare phases across the span","major"],
@@ -551,11 +554,11 @@ const DATA=[
   ["U-guard / conduit damaged","Full length down the pole","minor"],
   ["Floating phase – conductor off insulator, not tied","Each phase at each insulator","crit"],
   ["Primary neutral broken or floating","Neutral position below the primary","crit"]]},
- {id:"sec",cat:"Conductors",name:"Secondary conductors",sub:"Open wire, triplex or underground",figs:["open","triplex","ug-sec","neut-broken"],checks:[
+ {id:"sec",cat:"Conductors",name:"Secondary",sub:"Open wire, twist or underground",types:["Open Wire Secondary Conductor","Twist Secondary Conductor","Underground Secondary Conductor"],figs:["open","triplex","ug-sec","neut-broken"],checks:[
   ["Conductor loose or disconnected","Any lead hanging or pulled out","crit"],
   ["Neutral broken or damaged","Bare neutral intact end to end","crit"],
   ["Connector burnt, melted or discoloured","Heat marks at clamps and taps","major"],
-  ["Triplex insulation damaged or worn","Cuts, rubs, exposed conductor","major"],
+  ["Twist (triplex) insulation damaged or worn","Cuts, rubs, exposed conductor","major"],
   ["Service drop sagging or in tree contact","Clearance and vegetation","major"],
   ["Connectors corroded","Green/white buildup","minor"]]},
  {id:"arm",cat:"Framing",name:"Framing",sub:"Cross arm, braces or armless",figs:["arm","brace","armless"],checks:[
@@ -725,11 +728,11 @@ const T1F={
 
 const KEY="pole-check-v1";
 let st=load();
-function blank(){return {pole:"",img:"",marks:{},na:{},open:"anim"}}
+function blank(){return {pole:"",img:"",marks:{},na:{},type:{},open:"anim"}}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.marks)return s}catch(e){}return blank()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
 function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-const lab=s=>s.cat.toLowerCase()===s.name.toLowerCase()?s.name:`${s.cat} › ${s.name}`;
+const lab=s=>(s.cat.toLowerCase()===s.name.toLowerCase()?s.name:`${s.cat} › ${s.name}`)+((st.type||{})[s.id]?` › ${st.type[s.id]}`:"");
 const isT1=(m,c)=>m.t1!==undefined?m.t1:(m.sev||c[2])==="crit";
 function t1Items(){
   const out=[];
@@ -770,7 +773,7 @@ function render(){
     return head+`<details class="sec" id="sec-${s.id}" ${st.open===s.id?"open":""}>
       <summary><span class="num">${si+1}</span><span class="sname">${esc(s.name)}<em>${esc(s.sub)}</em></span><span class="scount" id="cnt-${s.id}"></span></summary>
       <div class="body ${st.na[s.id]?"disabled":""}">
-        <div class="toprow"><label class="natoggle"><input type="checkbox" id="na-${s.id}" data-na="${s.id}" ${st.na[s.id]?"checked":""}> Not on this pole</label>${figs}</div>
+        <div class="toprow"><label class="natoggle"><input type="checkbox" id="na-${s.id}" data-na="${s.id}" ${st.na[s.id]?"checked":""}> Not on this pole</label>${s.types?`<label class="typesel">Type <select id="type-${s.id}" data-type="${s.id}"><option value="">Select…</option>${s.types.map(t=>`<option ${(st.type||{})[s.id]===t?"selected":""}>${esc(t)}</option>`).join("")}</select></label>`:""}${figs}</div>
         ${rows}
       </div></details>`}).join("");
   update();
@@ -840,7 +843,8 @@ secEl.addEventListener("input",e=>{
   if(a==="sev"){render();document.getElementById("sev-"+k)?.focus()}else update();
 });
 document.getElementById("t1copy").onclick=()=>copyText(t1Report(t1Items()),document.getElementById("t1toast"),document.getElementById("t1list"));
-secEl.addEventListener("change",e=>{const id=e.target.dataset.na;if(!id)return;st.na[id]=e.target.checked;render()});
+secEl.addEventListener("change",e=>{const t=e.target.dataset.type;if(t){st.type=st.type||{};st.type[t]=e.target.value;update();return}
+  const id=e.target.dataset.na;if(!id)return;st.na[id]=e.target.checked;render()});
 secEl.addEventListener("toggle",e=>{if(e.target.open){st.open=e.target.id.slice(4);save()}},true);
 
 const poleEl=document.getElementById("poleId"),imgEl=document.getElementById("imgRef");
@@ -855,15 +859,19 @@ document.getElementById("copyBtn").onclick=()=>{const pre=document.getElementByI
 
 /* ---------- Figures view ---------- */
 const secName=id=>DATA.find(d=>d.id===id)?.name||"";
-document.getElementById("figs").innerHTML=CATS.map(([cid,cname,csub])=>`<section class="cat"><h2 id="cat-${cid}">${cname}</h2>${csub?`<p class="catsub">${csub}</p>`:""}<div class="grid">${
-  FIGS.filter(f=>f.cat===cid).map(f=>`<article class="fig" id="fig-${f.id}">
+document.getElementById("figs").innerHTML=CATS.map(([cid,cname,csub])=>`<section class="cat"><h2 id="cat-${cid}">${cname}</h2>${csub?`<p class="catsub">${csub}</p>`:""}${figGroups(cid)}</section>`).join("");
+function figCard(f){return `<article class="fig" id="fig-${f.id}">
     ${svg(SVG[f.id],esc(f.name))}
     <h3>${esc(f.name)}</h3>
     <div><div class="lbl">Spot it</div><p>${esc(f.spot)}</p></div>
     <div><div class="lbl">Watch for</div><div class="watch">${f.watch.map(w=>`<span>${esc(w)}</span>`).join("")}</div></div>
     ${T1F[f.id]?"":"<!--"}<div class="t1fig"><div class="lbl">Tier 1 – report now if</div><ul>${(T1F[f.id]||[]).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>${T1F[f.id]?"":"-->"}
     <button type="button" class="btn sm" data-sec="${f.sec}">Check: ${esc(secName(f.sec))} →</button>
-  </article>`).join("")}</div></section>`).join("");
+  </article>`}
+function figGroups(cid){
+  const fs=FIGS.filter(f=>f.cat===cid), subs=[...new Set(fs.map(f=>f.sub||""))];
+  return subs.map(sb=>`${sb?`<h3 class="subhead">${esc(sb)}</h3>`:""}<div class="grid">${fs.filter(f=>(f.sub||"")===sb).map(figCard).join("")}</div>`).join("");
+}
 document.getElementById("catnav").innerHTML=CATS.map(([cid,cname])=>`<button type="button" data-cat="${cid}">${cname}</button>`).join("");
 document.getElementById("catnav").addEventListener("click",e=>{const b=e.target.closest("[data-cat]");if(b)document.getElementById("cat-"+b.dataset.cat).scrollIntoView({behavior:reduce()?"auto":"smooth"})});
 document.getElementById("figs").addEventListener("click",e=>{const b=e.target.closest("[data-sec]");if(b)goSec(b.dataset.sec)});
