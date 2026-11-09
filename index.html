@@ -191,6 +191,7 @@ summary::-webkit-details-marker{display:none}
 .hole{fill:var(--ink)}
 .rot{fill:var(--dead);stroke:var(--ink);stroke-width:.8}
 .brand{fill:none;stroke:var(--ink);stroke-width:.8}
+.tubes{fill:none;stroke:var(--tube);stroke-width:5;stroke-linecap:round} .tubeso{fill:none;stroke:var(--ink);stroke-width:7;stroke-linecap:round}
 .lbs{fill:var(--ink);font:600 5.5px var(--mono)}
 .cathead{margin:14px 0 0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:4px}
 .catsub{margin:-4px 0 10px;font-size:13px;color:var(--muted)}
@@ -299,6 +300,14 @@ const xh=(cx,cy)=>`<path d="M${cx-10} ${cy}h6M${cx+4} ${cy}h6M${cx} ${cy-10}v6M$
 const irFrame=(id,body)=>irDefs(id)+R(0,0,200,150,"irbg")+body+`<rect x="186" y="16" width="7" height="110" fill="url(#sc-${id})"/>`+IT(189.5,11,"95°","middle")+IT(189.5,138,"20°","middle");
 const crown=(cx,cy,s)=>C(cx,cy,14*s,"leaf")+C(cx-12*s,cy+6*s,11*s,"leaf2")+C(cx+12*s,cy+5*s,11*s,"leaf2")+C(cx-5*s,cy-9*s,10*s,"leaf")+C(cx+7*s,cy-8*s,10*s,"leaf2");
 const tx=t=>20+t*160/30;
+/* 3-phase porcelain cutouts on double wood */
+const miniCO=(x,open)=>R(x-5,50,10,6,"metal")+R(x-4,56,8,44,"porc",2)+vS(x,62,4,11,7,2,"porc")
+  +R(x,54,12,3,"metal")+R(x+8,51,9,8,"metal",2)+R(x,99,12,3,"metal")
+  +(open?P(`M${x+11} 101L${x+24} 138`,"tubeso")+P(`M${x+11} 101L${x+24} 138`,"tubes"):P(`M${x+11} 101L${x+12} 59`,"tubeso")+P(`M${x+11} 101L${x+12} 59`,"tubes"))
+  +C(x+11,101,3,"metal")+P(`M${x} 4Q${x+20} 12 ${x+15} 51`)+P(`M${x+11} 104Q${x+14} 130 ${x+8} 150`);
+const dbl3=(openIdx)=>POLE(92,16,30,120)+R(4,34,192,10,"wood",1)+R(4,40,192,10,"wood",1)+C(10,45,2.2,"metal")+C(190,45,2.2,"metal")+C(100,45,2.5,"metal")
+  +[24,58,128].map((x,i)=>pinS(x,34)+miniCO(x,i===openIdx)).join("");
+const DW=`<line x1="95" y1="26" x2="95" y2="35" class="ld"/>`+T(95,13,"double","middle")+T(95,22,"wood","middle");
 
 function cutout(cls,poly,lab=true){
   return POLE()+R(24,70,36,5,"metal")+R(58,28,16,92,cls,3)+(poly?vS(66,34,10,9,11,2.5,cls):vS(66,38,6,15,13,3.5,cls))
@@ -431,6 +440,9 @@ const SVG={
  "pole-base":`<rect x="0" y="100" width="200" height="50" class="earth"/><line x1="0" y1="100" x2="200" y2="100" class="gnd"/>`+R(80,0,40,150,"wood")
    +P("M80 86Q86 96 80 112L80 86Z M120 84Q112 96 120 114L120 84Z","rot")+R(80,92,40,14,"rot")+`<path d="M84 96h10M98 100h14M88 104h8" class="crack"/>`
    +L(120,96,140,86,"decay")+T(6,96,"ground line"),
+ "co-3ph-closed":dbl3(-1)+DW+L(144,55,162,68,"contact")+L(141,80,162,88,"closed"),
+ "co-3ph-open":dbl3(1)+C(74,122,20,"hit")+DW+L(93,128,150,118,"door open")+T(153,129,"no contact")
+   +L(144,55,162,68,"contact")+L(141,80,162,88,"closed"),
  "pole-tag":R(80,0,40,150,"wood")+R(84,40,32,14,"plate",1)+T(100,49,"P-10458","middle").replace('class="lb"','class="lbs"')
    +R(87,82,26,22,"brand")+T(100,91,"SP 45-3","middle").replace('class="lb"','class="lbs"')+T(100,100,"2004","middle").replace('class="lb"','class="lbs"')
    +L(112,47,135,47,"pole ID tag")+L(113,93,135,93,"birthmark")
@@ -484,6 +496,8 @@ const FIGS=[
  {id:"hw-ground",cat:"hw",name:"Pole ground",sec:"hw",spot:"Copper ground wire down the pole, covered by molding near the bottom and connected to a ground rod.",watch:["Ground wire cut or stolen","Molding missing","Wire loose from pole"]},
  {id:"pole-top",cat:"pole",name:"Pole top",sec:"poles",spot:"Top of the pole above the hardware: cap, top splits and checks, and woodpecker holes show here.",watch:["Split or check at top","Woodpecker holes","Cap missing","Burnt pole top"]},
  {id:"pole-base",cat:"pole",name:"Ground line",sec:"poles",spot:"Where the pole meets the ground. Look for rot, shell loss, fire damage and erosion around the base.",watch:["Ground-line decay","Erosion or washout","Fire damage","Vehicle damage"]},
+ {id:"co-3ph-closed",cat:"prot",name:"3-phase porcelain cutouts – double wood, closed",sec:"co",spot:"Three porcelain cutouts hung under a double wood arm (two cross arms bolted either side of the pole). Each fuse door runs up beside its cutout and latches into the top contact, so all three phases have contact.",watch:["Door not fully seated","Cracked porcelain on any phase","Burnt top contact","Arms separating"]},
+ {id:"co-3ph-open",cat:"prot",name:"3-phase porcelain cutouts – double wood, one open",sec:"co",spot:"Same setup, but one fuse door has dropped and hangs down from the hinge. That phase has no contact (blown fuse or opened). Compare all three doors side by side.",watch:["Door hanging from hinge","Fuse barrel missing","Other phases still closed (single-phasing)"]},
  {id:"pole-tag",cat:"pole",name:"Pole tag & birthmark",sec:"poles",spot:"The pole ID tag, and the birthmark (brand) with height, class and year. Use these to confirm which pole you're reporting.",watch:["Tag missing or unreadable","Tag doesn't match records"]}
 ];
 
@@ -511,7 +525,7 @@ const DATA=[
   ["Triplex insulation damaged or worn","Cuts, rubs, exposed conductor","major"],
   ["Service drop sagging or in tree contact","Clearance and vegetation","major"],
   ["Connectors corroded","Green/white buildup","minor"]]},
- {id:"arm",cat:"Framing",name:"Framing",sub:"Cross arm, braces or armless",figs:["arm","brace","armless"],checks:[
+ {id:"arm",cat:"Framing",name:"Framing",sub:"Cross arm, braces or armless",figs:["arm","brace","armless","co-3ph-closed"],checks:[
   ["Arm split or cracked","Ends and around bolt holes","major"],
   ["Rot or decay","Soft, dark or crumbling wood, top surface","major"],
   ["Burn damage","Charring near insulators or hardware","crit"],
@@ -519,7 +533,8 @@ const DATA=[
   ["Braces broken, missing or loose","Both braces down to the pole","major"],
   ["Woodpecker or insect holes","Holes in arm or upper pole","minor"],
   ["Through-bolts or hardware loose","Gaps between arm and pole","minor"],
-  ["Armless: standoff bracket bent or loose","Each bracket on the pole","major"]]},
+  ["Armless: standoff bracket bent or loose","Each bracket on the pole","major"],
+  ["Double wood: arms separated or arming bolts loose","Gap between the two arms, bolts at each end","minor"]]},
  {id:"guy",cat:"Guying",name:"Guying",sub:"Down guys, strain insulators, span guys",figs:["guy-down","guy-ins","guy-span"],checks:[
   ["Guy slack or broken","Compare tension to other guys","major"],
   ["Guy guard missing or damaged","Yellow guard near the ground","minor"],
@@ -551,7 +566,7 @@ const DATA=[
   ["Foreign object on lines (balloon, kite, debris)","All conductors in frame","major"],
   ["Fire, smoke or active arcing visible","Anywhere on the structure or below it","crit"],
   ["Pole tag missing or doesn't match records","Confirm pole ID","minor"]]},
- {id:"pco",cat:"Protective Devices",name:"Silver-top PCO",sub:"Porcelain cutout with silver top cap",figs:["co-porc"],checks:[
+ {id:"pco",cat:"Protective Devices",name:"Silver-top PCO",sub:"Porcelain cutout with silver top cap",figs:["co-porc","co-3ph-closed","co-3ph-open"],checks:[
   ["Porcelain body cracked or chipped","Zoom on the full length of the porcelain","major"],
   ["Fuse door dropped / hanging open","Door should sit closed and latched at the top","major"],
   ["Silver top cap corroded, split or missing","Check the cap and vent area","minor"],
@@ -565,14 +580,15 @@ const DATA=[
   ["Tracking or burn marks on housing","Dark streaks along the sheds","major"],
   ["Line lead loose or burnt","Top terminal and jumper","major"],
   ["Bracket loose or arrester leaning","Compare angle to other phases","minor"]]},
- {id:"co",cat:"Protective Devices",name:"Cutouts",sub:"Porcelain or polymer",figs:["co-porc","co-poly"],checks:[
+ {id:"co",cat:"Protective Devices",name:"Cutouts",sub:"Porcelain or polymer, single or 3-phase",figs:["co-porc","co-poly","co-3ph-closed","co-3ph-open"],checks:[
   ["Fuse door open / dropped (blown fuse)","Door swung down out of the top contact","major"],
   ["Fuse barrel missing","Empty cutout body","major"],
   ["Door misaligned or partly open","Door not fully seated","major"],
   ["Porcelain / polymer body cracked","Full length of body","major"],
   ["Arc damage on contacts","Pitting or burns at top/bottom contact","major"],
   ["Tracking or burn marks","Streaks on body","major"],
-  ["Bracket loose or cutout leaning","Mounting angle","minor"]]},
+  ["Bracket loose or cutout leaning","Mounting angle","minor"],
+  ["3-phase: one door open while others closed","Compare all three doors side by side","major"]]},
  {id:"rec",cat:"Protective Devices",name:"Recloser",sub:"Single- or three-phase",figs:["recloser"],checks:[
   ["Lockout handle down (yellow handle pulled)","Compare handle to normal position","major"],
   ["Oil leak on tank","Stains on tank, bracket or pole","major"],
@@ -662,6 +678,8 @@ const T1F={
  "hw-splice":["Splice separating, wire about to drop","Hot splice over 15 °C ΔT"],
  "hw-bolt":["Equipment hanging by one bolt","Arm loose and dropping"],
  "hw-ground":["Ground cut at equipment","Broken ground with damaged neutral"],
+ "co-3ph-closed":["Door half-open, arcing at contact","Porcelain shattered with lead hanging"],
+ "co-3ph-open":["Door open with burn marks or smoke","Lead burnt off or hanging low"],
  "pole-top":["Pole top burnt or broken off","Top split letting hardware pull out"],
  "pole-base":["Pole broken or cracked through","Base washed out or severe lean"]
 };
