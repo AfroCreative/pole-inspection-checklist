@@ -207,6 +207,7 @@ summary::-webkit-details-marker{display:none}
 .frp,.conc,.glassi,.wrapc,.oldwood{stroke:var(--ink);stroke-width:1}
 .frp{fill:var(--frp)} .conc{fill:var(--conc)} .glassi{fill:var(--glassi);fill-opacity:.85} .wrapc{fill:var(--wrapc)} .oldwood{fill:var(--oldwood)}
 .bracew{fill:none;stroke:var(--wood);stroke-width:5;stroke-linecap:round}
+.rowband{fill:var(--ok-bg);fill-opacity:.8} .rowline{fill:none;stroke:var(--ok);stroke-width:1.4;stroke-dasharray:5 3} .rowarrow{fill:none;stroke:var(--ok);stroke-width:1.4;stroke-linecap:round}
 .okb{fill:var(--ok)} .nob{fill:var(--crit)} .glyph{fill:none;stroke:var(--panel);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .comm{fill:none;stroke:var(--jacket);stroke-width:4.5;stroke-linecap:round}
 .hl{fill:none;stroke:var(--accent);stroke-width:3.5;stroke-linecap:round}
@@ -556,6 +557,14 @@ const vegLines=()=>EARTH(132)+P("M172 150L170 50","trunk")+crown(168,28,1)+crown
   +C(146,19,8,"hit")+C(146,61,8,"hit")+C(146,103,8,"hit")
   +badge(60,6,true)+T(70,9,"PRIMARY")+badge(60,48,true)+T(70,51,"SECONDARY")+badge(60,90,false)+T(70,93,"PHONE / CABLE")
   +badge(8,142,true)+T(17,145,"log it")+badge(70,142,false)+T(79,145,"not ours – owner's");
+const vegROW=()=>R(40,0,120,128,"rowband")+EARTH(128)
+  +`<line x1="40" y1="0" x2="40" y2="128" class="rowline"/><line x1="160" y1="0" x2="160" y2="128" class="rowline"/>`
+  +P("M44 118H156M44 118l5 -3M44 118l5 3M156 118l-5 -3M156 118l-5 3","rowarrow")+T(133,113,"ROW width","middle")
+  +P("M60 128V110","trunk")+crown(60,100,.6)
+  +P("M184 128L182 70","trunk")+crown(180,56,1.1)+P("M178 62L144 36","limb")+crown(140,30,.55)
+  +R(94,30,12,98,"wood")+R(70,40,60,7,"wood",1)+pinS(76,40)+pinS(124,40)+C(100,30,0,"none")
+  +C(130,18,11,"hit")
+  +T(4,139,"in ROW: log defect")+T(196,148,"outside: Out of Right of Way","end");
 
 /* ---------- Register new drawings ---------- */
 Object.assign(SVG,{
@@ -572,6 +581,7 @@ Object.assign(SVG,{
  "pin-poly":postFig(),"pin-porc":pinFig("porc"),"pin-glass":pinFig("glassi"),
  "spool-poly":spoolFig("poly"),"spool-porc":spoolFig("porc"),
  "veg-lines":vegLines(),
+ "veg-row":vegROW(),
  "pole-dw":doubleWood(),"pole-frp":poleFull("frp"),"pole-conc":poleFull("conc"),"pole-steel":poleFull("metal"),"pole-wood":poleFull("wood"),
  "top-frp":poleTopFig("frp"),"top-conc":poleTopFig("conc"),"top-steel":poleTopFig("metal"),"top-wood":poleTopFig("wood")
 });
@@ -649,7 +659,7 @@ const SDEF={
  "AEP Attachments":{d:"Old pole still carries AEP facilities."},
  "Has Attachments":{d:"Old pole still carries third-party attachments (telecom, cable)."},
  "No Attachments":{d:"Old pole has nothing left on it and is ready to remove."},
- "Out of Right of Way":{d:"The vegetation is outside the right-of-way."}
+ "Out of Right of Way":{d:"The tree or brush grows outside the cleared right-of-way (trunk on private property beyond the corridor) but still reaches the lines. Log the defect (Overhang, Limb on Line or Vines) and add this state."}
 };
 
 /* ---------- Assets (category › asset › defects), from the defect tool ---------- */
@@ -718,7 +728,7 @@ const CATS=[
   {name:"Secondary Bushing",tag:"Transformer Bushing",n:"3",figs:[["bush-sec"]],spot:"Short bushings on the side of the tank (X1, X2, X3) with spade or eye-bolt terminals.",def:["Flashed","Thermally Hot","Broken"]},
   {name:"Capacitor",n:"5",figs:[["cap"]],spot:"Row of rectangular gray cans on a rack, each with a bushing on top, fed through cutouts.",def:["Bulging","Leaking","Missing Animal Guard","Missing Pole Wrap","Thermally Hot"]}]],
  ["Vegetation",[
-  {name:"Vegetation",n:"3+1",figs:[["veg-lines","Which lines"],["veg-contact","Limb on line"],["veg-clear","Overhang"],["veg-vine","Vines"],["veg-hazard","Hazard tree"]],spot:"Trees, limbs and vines around the lines and equipment. Record Out of Right of Way as the state when it applies.",def:["Overhang","Limb on Line","Vines"],st:["Out of Right of Way"]}]],
+  {name:"Vegetation",n:"3+1",figs:[["veg-lines","Which lines"],["veg-row","Out of ROW"],["veg-contact","Limb on line"],["veg-clear","Overhang"],["veg-vine","Vines"],["veg-hazard","Hazard tree"]],spot:"Trees, limbs and vines around the lines and equipment. Record Out of Right of Way as the state when it applies.",def:["Overhang","Limb on Line","Vines"],st:["Out of Right of Way"]}]],
  ["Thermal (IR)",[
   {name:"Thermal ΔT guide",guide:true,figs:[["ir-scale"]],spot:"Compare a part with the same part on the other phases under the same load. Log it on the asset as Thermally Hot or Thermally Hot Connection.",def:[]},
   {name:"Hot connection – primary",guide:true,figs:[["ir-primary"]],spot:"Hotspot at a primary jumper clamp or hot line clamp. Log as Primary Jumper › Thermally Hot.",def:[]},
