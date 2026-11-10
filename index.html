@@ -207,6 +207,8 @@ summary::-webkit-details-marker{display:none}
 .frp,.conc,.glassi,.wrapc,.oldwood{stroke:var(--ink);stroke-width:1}
 .frp{fill:var(--frp)} .conc{fill:var(--conc)} .glassi{fill:var(--glassi);fill-opacity:.85} .wrapc{fill:var(--wrapc)} .oldwood{fill:var(--oldwood)}
 .bracew{fill:none;stroke:var(--wood);stroke-width:5;stroke-linecap:round}
+.okb{fill:var(--ok)} .nob{fill:var(--crit)} .glyph{fill:none;stroke:var(--panel);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.comm{fill:none;stroke:var(--jacket);stroke-width:4.5;stroke-linecap:round}
 .hl{fill:none;stroke:var(--accent);stroke-width:3.5;stroke-linecap:round}
 .searchrow{display:flex;gap:10px;align-items:center;margin-top:10px}
 .searchrow input{flex:1;min-width:0}
@@ -547,6 +549,13 @@ const doubleWood=()=>EARTH(128)+R(78,4,16,124,"wood",1)+R(102,34,14,94,"oldwood"
 const poleWrap=()=>EARTH(128)+R(92,0,16,128,"wood")+R(40,34,120,8,"wood",1)+pinS(56,34)+pinS(144,34)
   +R(108,46,26,22,"tank",4)+R(86,72,28,40,"wrapc",2)+[78,86,94,102].map(y=>`<line x1="86" y1="${y}" x2="114" y2="${y}" class="strand"/>`).join("")
   +L(114,92,140,92,"pole wrap")+L(134,58,150,64,"equipment");
+const badge=(x,y,ok)=>C(x,y,6,ok?"okb":"nob")+P(ok?`M${x-3} ${y}l2 2.5l4 -5`:`M${x-2.5} ${y-2.5}l5 5M${x+2.5} ${y-2.5}l-5 5`,"glyph");
+const vegLines=()=>EARTH(132)+P("M172 150L170 50","trunk")+crown(168,28,1)+crown(178,62,1.1)+crown(166,98,1)+crown(192,84,.9)
+  +POLE(30,14,0,132)+R(16,20,40,6,"wood",1)+R(44,54,4,9,"metal")+R(44,96,5,8,"metal")
+  +P("M44 16Q120 22 200 16","wthick")+P("M48 58Q120 64 200 58","jkt3")+P("M49 100Q120 106 200 100","comm")
+  +C(146,19,8,"hit")+C(146,61,8,"hit")+C(146,103,8,"hit")
+  +badge(60,6,true)+T(70,9,"PRIMARY")+badge(60,48,true)+T(70,51,"SECONDARY")+badge(60,90,false)+T(70,93,"PHONE / CABLE")
+  +badge(8,142,true)+T(17,145,"log it")+badge(70,142,false)+T(79,145,"not ours – owner's");
 
 /* ---------- Register new drawings ---------- */
 Object.assign(SVG,{
@@ -562,6 +571,7 @@ Object.assign(SVG,{
  "de-poly":SVG["deadend"],"de-porc":deFig("porc"),"de-glass":deFig("glassi"),
  "pin-poly":postFig(),"pin-porc":pinFig("porc"),"pin-glass":pinFig("glassi"),
  "spool-poly":spoolFig("poly"),"spool-porc":spoolFig("porc"),
+ "veg-lines":vegLines(),
  "pole-dw":doubleWood(),"pole-frp":poleFull("frp"),"pole-conc":poleFull("conc"),"pole-steel":poleFull("metal"),"pole-wood":poleFull("wood"),
  "top-frp":poleTopFig("frp"),"top-conc":poleTopFig("conc"),"top-steel":poleTopFig("metal"),"top-wood":poleTopFig("wood")
 });
@@ -630,8 +640,8 @@ const DEF={
  "Loose pole attachment":{d:"Hanger bracket or bolts loose; tank tilted or pulling away from the pole.",t1:T1C,t:"Tier 1 if the tank could fall."},
  "Dented":{d:"Tank dented or pushed in."},
  "Bulging":{d:"Can swollen, with sides pushed out.",t1:T1A,t:"Always Tier 1."},
- "Overhang":{d:"Limbs hanging over the lines."},
- "Limb on Line":{d:"Branch resting on or touching the conductor.",t1:T1C,t:"Tier 1 on primary, or if burning."},
+ "Overhang":{d:"Limbs hanging over the power lines (primary, secondary or service). Overhang on telephone or cable lines only is not logged."},
+ "Limb on Line":{d:"Branch resting on or touching a power line: primary, secondary or service. Telephone and cable lines belong to their owner and are not logged here.",t1:T1C,t:"Tier 1 on primary, or if burning."},
  "Vines":{d:"Vines climbing the pole, guy or equipment.",t1:T1C,t:"Tier 1 if vines reach live parts."}
 };
 const SDEF={
@@ -708,7 +718,7 @@ const CATS=[
   {name:"Secondary Bushing",tag:"Transformer Bushing",n:"3",figs:[["bush-sec"]],spot:"Short bushings on the side of the tank (X1, X2, X3) with spade or eye-bolt terminals.",def:["Flashed","Thermally Hot","Broken"]},
   {name:"Capacitor",n:"5",figs:[["cap"]],spot:"Row of rectangular gray cans on a rack, each with a bushing on top, fed through cutouts.",def:["Bulging","Leaking","Missing Animal Guard","Missing Pole Wrap","Thermally Hot"]}]],
  ["Vegetation",[
-  {name:"Vegetation",n:"3+1",figs:[["veg-contact","Limb on line"],["veg-clear","Overhang"],["veg-vine","Vines"],["veg-hazard","Hazard tree"]],spot:"Trees, limbs and vines around the lines and equipment. Record Out of Right of Way as the state when it applies.",def:["Overhang","Limb on Line","Vines"],st:["Out of Right of Way"]}]],
+  {name:"Vegetation",n:"3+1",figs:[["veg-lines","Which lines"],["veg-contact","Limb on line"],["veg-clear","Overhang"],["veg-vine","Vines"],["veg-hazard","Hazard tree"]],spot:"Trees, limbs and vines around the lines and equipment. Record Out of Right of Way as the state when it applies.",def:["Overhang","Limb on Line","Vines"],st:["Out of Right of Way"]}]],
  ["Thermal (IR)",[
   {name:"Thermal ΔT guide",guide:true,figs:[["ir-scale"]],spot:"Compare a part with the same part on the other phases under the same load. Log it on the asset as Thermally Hot or Thermally Hot Connection.",def:[]},
   {name:"Hot connection – primary",guide:true,figs:[["ir-primary"]],spot:"Hotspot at a primary jumper clamp or hot line clamp. Log as Primary Jumper › Thermally Hot.",def:[]},
