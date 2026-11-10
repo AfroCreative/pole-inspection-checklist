@@ -241,6 +241,10 @@ header .catnav button{white-space:nowrap}
 .legend{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:13px;color:var(--muted);margin:12px 0 0}
 .legend .chip{cursor:default;font-size:12.5px;padding:2px 9px}
 .empty{margin:30px 0;color:var(--muted);font-size:15px}
+.decide{background:var(--sky);border-radius:0 0 6px 6px;margin-top:-9px;padding:4px 10px 8px;font-size:13px;line-height:1.35;display:flex;flex-direction:column;gap:3px}
+.decide p{margin:0;color:var(--fg)}
+.decide .acc{color:var(--ok)} .decide .den{color:var(--crit)}
+.asset > .view svg{border-radius:6px 6px 0 0}
 .howto{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--fg);border-radius:6px;margin:0 0 12px;max-width:820px}
 .howto summary{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;flex-wrap:wrap;gap:8px}
 .howto .model{font-family:var(--mono);font-weight:500;letter-spacing:0;text-transform:none;font-size:12.5px;color:var(--muted)}
@@ -645,7 +649,7 @@ const CO=["Cracked","Flashed","Deteriorated","Fuse Blown","Broken","Thermally Ho
 const NOLIST="Defect list not captured yet. Send a screenshot with this one expanded and it will be added.";
 const CATS=[
  ["Animal Mitigation",[
-  {name:"Pole Wrap",n:"2",figs:[["pole-wrap"]],spot:"Metal or plastic sheet wrapped around the pole below the equipment so squirrels and other climbers can't reach it.",def:["Missing","Incomplete Coverage"]},
+  {name:"Pole Wrap",n:"2",figs:[["pole-wrap"]],spot:"Metal or plastic sheet wrapped around the pole below the equipment so squirrels and other climbers can't reach it.",acc:"the pole carries a transformer, recloser or capacitor and has no wrap, or the wrap leaves a gap or is too short.",den:"the wrap is fitted all the way around, or there is no equipment on the pole that needs one (a bare crossarm or a streetlight does not).",def:["Missing","Incomplete Coverage"]},
   {name:"Animal Guard",n:"2",figs:[["anim-bushing","Bushing"],["anim-cover","Cutout & lead"]],spot:"Plastic cover over a bushing or terminal (transformer, arrester, cutout, recloser) so animals can't bridge from live parts to ground.",def:["Missing","Damaged"]}]],
  ["Conductors",[
   {name:"Copper Primary Conductor",tag:"Primary",n:"9",figs:[["cu"],["float-phase","Floating"],["neut-broken","Wire down"]],spot:"Bare stranded or solid wire, copper-brown when new, green or dark with age. Common on older lines.",def:PRI},
@@ -768,7 +772,7 @@ function card(a,cat){
   const sts=a.st?`<div class="chips"><span class="stl">State</span>${a.st.map(s=>chip(s,"st")).join("")}</div>`:"";
   const hay=[a.name,a.tag||"",cat,...a.def,...(a.st||[])].join(" ").toLowerCase();
   return `<article class="fig asset" id="a-${slug(a.name)}" data-search="${esc(hay)}">
-    ${views}${tabs}
+    ${views}${decide(cat,a)}${tabs}
     <div class="ahead"><h3>${esc(a.name)}</h3>${a.tag?`<span class="tag">${esc(a.tag)}</span>`:""}${a.n?`<span class="cnt" title="Number of defects (+ states) in the tool">${a.n}</span>`:""}</div>
     <p>${esc(a.spot)}</p>
     ${defs}${sts}
@@ -786,10 +790,14 @@ function howto(cat){
     ${h.log?`<p class="logas"><span class="stl">Log as</span> ${esc(h.log)}</p>`:""}
   </details>`;
 }
+function decide(cat,a){
+  const h=HOWTO[cat];if(!h)return "";
+  return `<div class="decide"><p><b class="acc">Accept</b> if ${esc(a.acc||h.acc)}</p><p><b class="den">Deny</b> if ${esc(a.den||h.den)}</p></div>`;
+}
 const figsEl=document.getElementById("figs");
 figsEl.innerHTML=CATS.map(([cat,assets])=>{
   const guide=assets.every(a=>a.guide);
-  return `<section class="cat" id="cat-${slug(cat)}"><h2>${esc(cat)}${guide?"":` <span>${assets.length}</span>`}</h2>${guide?'<p class="catsub">Inspection method – applies across all categories</p>':""}${howto(cat)}<div class="grid">${assets.map(a=>card(a,cat)).join("")}</div></section>`;
+  return `<section class="cat" id="cat-${slug(cat)}"><h2>${esc(cat)}${guide?"":` <span>${assets.length}</span>`}</h2>${guide?'<p class="catsub">Inspection method – applies across all categories</p>':""}<div class="grid">${assets.map(a=>card(a,cat)).join("")}</div></section>`;
 }).join("");
 document.getElementById("catnav").innerHTML=CATS.map(([cat])=>`<button type="button" data-cat="${slug(cat)}">${esc(cat)}</button>`).join("");
 document.getElementById("catnav").addEventListener("click",e=>{
