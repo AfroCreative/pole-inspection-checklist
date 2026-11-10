@@ -1,10 +1,11 @@
-# Pole Inspection Checklist
+# Distribution Defect Guide
 
-A step-by-step checklist for reviewing drone images of distribution poles, so no component or major fault gets missed.
+A reference for reviewing drone images of distribution poles, organized the same way as the defect tool:
+**Category › Asset › Defect**.
 
-- **Checklist:** grouped by the Distribution categories: Animal Mitigation, Conductors, Framing, Guying, Hardware & Accessories, Insulators, Poles, Protective Devices, Transformers & Capacitors, Vegetation, plus Thermal (IR). Mark each item OK or Fault, set severity, add notes.
-- **Figures:** labeled drawings for every category, with what to look for and when to escalate as Tier 1.
-- **Tier 1:** critical faults (and any fault you tick as urgent) collect in a red "report now" panel with its own copyable urgent report.
-- **Report:** copyable summary of faults, sorted by severity, plus anything not yet checked.
+- **Categories:** Animal Mitigation, Conductors, Framing, Guying, Hardware & Accessories, Insulators, Poles, Protective Devices, Transformers & Capacitors, Vegetation, plus a Thermal (IR) guide.
+- **Each asset** has a labeled drawing (some with extra views), how to spot it, and its exact defect and state names from the tool.
+- **Tap a defect** to see what it looks like and when it's Tier 1. Red chips are always Tier 1; dashed red chips are Tier 1 in some cases.
+- **Search** for any asset or defect name.
 
-Progress is saved in your browser. Open `index.html` directly or use the GitHub Pages link.
+Open `index.html` directly or use the hosted link.
