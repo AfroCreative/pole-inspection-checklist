@@ -323,12 +323,12 @@ const str2=(x0,x1,y0,y1)=>{let o="";for(let x=x0;x<x1-4;x+=8)o+=`<line x1="${x}"
 const twistBands=(y0,y1,ug)=>{let o="";const h=y1-y0;for(let x=-24;x<124;x+=36){o+=P(`M${x} ${y0}h12l8 ${h}h-12z`,"jk1")+P(`M${x+12} ${y0}h12l8 ${h}h-12z`,"jk2");
   if(ug)o+=P(`M${x+24} ${y0}h12l8 ${h}h-12z`,"jk1")+P(`M${x+30} ${y0}l8 ${h}`,"ystripe")}return o};
 /* 3-phase porcelain cutouts on a cross arm */
-const miniCO=(x,open)=>R(x-5,50,10,6,"metal")+R(x-4,56,8,44,"porc",2)+vS(x,62,4,11,7,2,"porc")
+const miniCO=(x,open,cls="porc")=>R(x-5,50,10,6,"metal")+R(x-4,56,8,44,cls,2)+(cls==="poly"?vS(x,61,7,6,6,1.6,cls):vS(x,62,4,11,7,2,cls))
   +R(x,54,12,3,"metal")+R(x+8,51,9,8,"metal",2)+R(x,99,12,3,"metal")
   +(open?P(`M${x+11} 101L${x+24} 138`,"tubeso")+P(`M${x+11} 101L${x+24} 138`,"tubes"):P(`M${x+11} 101L${x+12} 59`,"tubeso")+P(`M${x+11} 101L${x+12} 59`,"tubes"))
   +C(x+11,101,3,"metal")+P(`M${x} 8Q${x+20} 14 ${x+15} 51`)+P(`M${x+11} 104Q${x+14} 130 ${x+8} 150`);
-const dbl3=(openIdx)=>POLE(92,16,30,120)+R(4,38,192,12,"wood",1)+C(100,44,2.5,"metal")
-  +[24,58,128].map((x,i)=>pinS(x,38)+miniCO(x,i===openIdx)).join("");
+const dbl3=(openIdx,cls="porc")=>POLE(92,16,30,120)+R(4,38,192,12,"wood",1)+C(100,44,2.5,"metal")
+  +[24,58,128].map((x,i)=>pinS(x,38)+miniCO(x,i===openIdx,cls)).join("");
 
 function cutout(cls,poly,lab=true){
   return POLE()+R(24,70,36,5,"metal")+R(58,28,16,92,cls,3)+(poly?vS(66,34,10,9,11,2.5,cls):vS(66,38,6,15,13,3.5,cls))
@@ -462,7 +462,7 @@ const SVG={
    +P("M80 86Q86 96 80 112L80 86Z M120 84Q112 96 120 114L120 84Z","rot")+R(80,92,40,14,"rot")+`<path d="M84 96h10M98 100h14M88 104h8" class="crack"/>`
    +L(120,96,140,86,"decay")+T(6,96,"ground line"),
  "co-3ph-closed":dbl3(-1)+L(144,55,162,68,"contact")+L(141,80,162,88,"closed"),
- "co-3ph-open":dbl3(1)+C(74,122,20,"hit")+L(93,128,150,118,"door open")+T(153,129,"no contact")
+ "co-3ph-open":dbl3(1)+C(74,122,20,"hit")+L(93,128,150,118,"door open")+T(198,129,"no contact","end")
    +L(144,55,162,68,"contact")+L(141,80,162,88,"closed"),
  "pole-lean":`<rect x="0" y="128" width="200" height="22" class="earth"/><line x1="0" y1="128" x2="200" y2="128" class="gnd"/>`
    +`<line x1="100" y1="128" x2="100" y2="4" class="ld"/>`+`<g transform="rotate(12 100 128)">`+R(92,4,16,124,"wood")+R(68,18,64,8,"wood",1)+`</g>`
@@ -581,6 +581,8 @@ Object.assign(SVG,{
  "pin-poly":postFig(),"pin-porc":pinFig("porc"),"pin-glass":pinFig("glassi"),
  "spool-poly":spoolFig("poly"),"spool-porc":spoolFig("porc"),
  "veg-lines":vegLines(),
+ "co-3ph-poly-closed":dbl3(-1,"poly")+L(144,55,162,68,"contact")+L(141,80,162,88,"closed"),
+ "co-3ph-poly-open":dbl3(1,"poly")+C(74,122,20,"hit")+L(93,128,150,118,"door open")+T(198,129,"no contact","end")+L(144,55,162,68,"contact")+L(141,80,162,88,"closed"),
  "veg-row":vegROW(),
  "pole-dw":doubleWood(),"pole-frp":poleFull("frp"),"pole-conc":poleFull("conc"),"pole-steel":poleFull("metal"),"pole-wood":poleFull("wood"),
  "top-frp":poleTopFig("frp"),"top-conc":poleTopFig("conc"),"top-steel":poleTopFig("metal"),"top-wood":poleTopFig("wood")
@@ -720,7 +722,7 @@ const CATS=[
   {name:"Recloser",n:"5+1",figs:[["recloser"]],spot:"Gray tank with source and load bushings. Single-phase units have a yellow handle (down = locked out/open) and a counter.",def:["Corroded","Flashed","Missing Animal Guard","Missing Pole Wrap","Bypassed"],st:["Open"]},
   {name:"Polymer Arrester",tag:"Arrester",n:"7",figs:[["arr-poly"]],spot:"Slim gray rubber housing with many thin sheds, ground lead out of the bottom.",def:ARR},
   {name:"Porcelain Arrester",tag:"Arrester",n:"7",figs:[["arr-porc"]],spot:"Brown or gray glazed body with a few thick sheds, ground lead out of the bottom.",def:ARR},
-  {name:"Polymer Cutout",tag:"Cutout",n:"6+1",figs:[["co-poly"]],spot:"Gray polymer body with many small sheds and a fuse door alongside latched into the top contact.",def:CO,st:["Open"]},
+  {name:"Polymer Cutout",tag:"Cutout",n:"6+1",figs:[["co-poly"],["co-3ph-poly-closed","3-phase closed"],["co-3ph-poly-open","3-phase, one open"]],spot:"Gray polymer body with many small sheds and a fuse door alongside latched into the top contact.",def:CO,st:["Open"]},
   {name:"Porcelain Cutout",tag:"Cutout",n:"6+1",figs:[["co-porc"],["co-crack","Cracked"],["co-3ph-closed","3-phase closed"],["co-3ph-open","3-phase, one open"]],spot:"Glazed porcelain body with a tan fuse door alongside latched into the top contact. A dropped door means Fuse Blown or Open.",def:CO,st:["Open"]}]],
  ["Transformers & Capacitors",[
   {name:"Transformer",n:"5",figs:[["xfmr"]],spot:"Round gray tank hung on the pole; primary bushing on the lid, secondary bushings on the side.",def:["Leaking oil","Loose pole attachment","Corroded","Dented","Thermally Hot"]},
