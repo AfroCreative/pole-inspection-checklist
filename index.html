@@ -241,6 +241,15 @@ header .catnav button{white-space:nowrap}
 .legend{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:13px;color:var(--muted);margin:12px 0 0}
 .legend .chip{cursor:default;font-size:12.5px;padding:2px 9px}
 .empty{margin:30px 0;color:var(--muted);font-size:15px}
+.howto{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--fg);border-radius:6px;margin:0 0 12px;max-width:820px}
+.howto summary{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;flex-wrap:wrap;gap:8px}
+.howto .model{font-family:var(--mono);font-weight:500;letter-spacing:0;text-transform:none;font-size:12.5px;color:var(--muted)}
+.howto .draft{font-weight:600;letter-spacing:0;text-transform:none;font-size:12px;color:var(--minor);background:var(--minor-bg);padding:1px 7px;border-radius:4px}
+.howto p{margin:0;padding:0 14px 8px;font-size:14.5px;max-width:72ch}
+.howto p:last-child{padding-bottom:12px}
+.howto .flags{color:var(--muted)}
+.howto .acc{color:var(--ok)} .howto .den{color:var(--crit)}
+.howto .tags,.howto .logas{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 
 </style>
 
@@ -704,6 +713,43 @@ const CATS=[
   {name:"Hot transformer bushing",guide:true,figs:[["ir-bushing"]],spot:"A single hot terminal points to a loose or corroded connection. Log on the bushing as Thermally Hot.",def:[]}]]
 ];
 
+/* ---------- Model review: how to decide (per category) ---------- */
+const HOWTO={
+ "Animal Mitigation":{src:"tool",model:"Animal Guards",
+  flags:"Bare energized hardware an animal could bridge: transformer, recloser or capacitor bushings with no cover, arrester or cutout terminals with no guard, or a pole missing its wrap.",
+  acc:"you can see bare bushings or terminals on a transformer, recloser, arrester or cutout with nothing covering them.",
+  den:"the guards are fitted, or there is no equipment on the pole that needs one (a bare crossarm or a streetlight does not).",
+  tags:['30" Pole Wrap','14" Pole Wrap','Electrostatic Animal Guard (Cap & Xfmr)'],
+  log:"Pole Wrap › Missing / Incomplete Coverage, or Animal Guard › Missing / Damaged"},
+ "Conductors":{flags:"Broken or frayed strands, splices, wrong sag, low clearance, a wire off its insulator, or a hot connection.",
+  acc:"the damage is visible on the conductor itself: loose strands, a splice you can count, sag clearly different from the other phases, or a wire sitting off its insulator.",
+  den:"it's a shadow, a reflection or another wire overlapping in the image, or the “splice” is a normal connector or dead-end."},
+ "Framing":{flags:"Cracked, rotten, burnt or tilted arms and brackets, and broken or loose braces.",
+  acc:"the crack, rot, burn, tilt or brace problem is clearly on the arm, bracket or brace.",
+  den:"it's normal wood grain or surface checking, a shadow, or a tilt that comes from the camera angle (compare against the pole and buildings)."},
+ "Guying":{flags:"Slack or broken guys, missing guards or insulating rods, and bad anchors.",
+  acc:"the guy is visibly slack or broken, the guard or insulating rod is missing, or the anchor is exposed or pulling out.",
+  den:"the guy is tight and guarded, or it belongs to another company or a different pole."},
+ "Hardware & Accessories":{flags:"Burnt, loose or corroded connectors and leads, hot connections, and cut or missing pole grounds.",
+  acc:"the connector is visibly burnt, loose or corroded, IR shows it hotter than the same connection on the other phases, or the pole ground is cut or missing.",
+  den:"the ground is just hidden behind the pole or molding, or the heat is the same on all phases (normal load)."},
+ "Insulators":{flags:"Cracked, chipped, flashed, contaminated or broken insulators, broken tie wires, and damaged polymer.",
+  acc:"the crack, chip, flash marks, broken tie or polymer damage is clearly on the insulator.",
+  den:"it's glare on the glaze, a dirty lens, or a normal colour difference."},
+ "Poles":{flags:"Leaning, bent, cracked, split, rotten or damaged poles and pole tops, woodpecker holes, and double wood.",
+  acc:"the lean, crack, split, rot, holes or damage are clearly on the pole.",
+  den:"the lean comes from camera tilt (check it against buildings or other poles), or the lines are normal surface weathering checks."},
+ "Protective Devices":{flags:"Blown arresters, dropped cutout doors, cracked or flashed housings, bypassed reclosers, and missing guards.",
+  acc:"a door has dropped, an arrester disconnector is hanging, the housing is cracked or flashed, or the guard is missing.",
+  den:"the device is open on purpose (record State: Open instead), or it's a different device."},
+ "Transformers & Capacitors":{flags:"Oil leaks, bulging or dented tanks, corrosion, loose hangers, and bushing damage.",
+  acc:"there's a wet oil stain, a bulge, dent, heavy rust, a loose hanger or bushing damage you can see.",
+  den:"the stain is old paint or dirt with no wet look, or the “bulge” is just perspective."},
+ "Vegetation":{flags:"Limbs touching or overhanging the lines, and vines on the pole or equipment.",
+  acc:"limbs touch or hang over the lines, or vines are on the pole, guy or equipment.",
+  den:"the tree is behind the line in the image (check another angle). If it's outside the right-of-way, record State: Out of Right of Way."}
+};
+
 /* ---------- Page ---------- */
 function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 const slug=t=>t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
@@ -730,10 +776,20 @@ function card(a,cat){
     <div class="detail" hidden></div>
   </article>`;
 }
+function howto(cat){
+  const h=HOWTO[cat];if(!h)return "";
+  return `<details class="howto"${h.src==="tool"?" open":""}><summary>How to decide${h.model?` <span class="model">Model: ${esc(h.model)}</span>`:""}${h.src==="tool"?"":' <span class="draft">Drafted – not from the tool yet</span>'}</summary>
+    <p class="flags">The model flags ${esc(h.flags.charAt(0).toLowerCase()+h.flags.slice(1))}</p>
+    <p><b class="acc">Accept</b> if ${esc(h.acc)}</p>
+    <p><b class="den">Deny</b> if ${esc(h.den)}</p>
+    ${h.tags?`<p class="tags"><span class="stl">Sheets tags</span> ${h.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join(" ")}</p>`:""}
+    ${h.log?`<p class="logas"><span class="stl">Log as</span> ${esc(h.log)}</p>`:""}
+  </details>`;
+}
 const figsEl=document.getElementById("figs");
 figsEl.innerHTML=CATS.map(([cat,assets])=>{
   const guide=assets.every(a=>a.guide);
-  return `<section class="cat" id="cat-${slug(cat)}"><h2>${esc(cat)}${guide?"":` <span>${assets.length}</span>`}</h2>${guide?'<p class="catsub">Inspection method – applies across all categories</p>':""}<div class="grid">${assets.map(a=>card(a,cat)).join("")}</div></section>`;
+  return `<section class="cat" id="cat-${slug(cat)}"><h2>${esc(cat)}${guide?"":` <span>${assets.length}</span>`}</h2>${guide?'<p class="catsub">Inspection method – applies across all categories</p>':""}${howto(cat)}<div class="grid">${assets.map(a=>card(a,cat)).join("")}</div></section>`;
 }).join("");
 document.getElementById("catnav").innerHTML=CATS.map(([cat])=>`<button type="button" data-cat="${slug(cat)}">${esc(cat)}</button>`).join("");
 document.getElementById("catnav").addEventListener("click",e=>{
